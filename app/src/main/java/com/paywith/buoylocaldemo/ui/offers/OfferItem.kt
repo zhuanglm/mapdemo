@@ -108,7 +108,6 @@ fun OfferItem(obs: OfferUiModel, modifier: Modifier = Modifier) {
                     top.linkTo(profileImage.top)
                     bottom.linkTo(profileImage.bottom)
                 }
-                .padding(horizontal = 8.dp, vertical = 4.dp)
         ) {
             Image(
                 painter = pointsBackgroundPainter ,
@@ -122,8 +121,16 @@ fun OfferItem(obs: OfferUiModel, modifier: Modifier = Modifier) {
             Text(
                 text = obs.pointsText,
                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                color = colorResource(id = R.color.colorPointsBlue),
-                modifier = Modifier.align(Alignment.Center)
+                color = colorResource(id = R.color.colorPointsBlue), // 确保 R.color.colorPointsBlue 已导入
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .defaultMinSize(minWidth = 80.dp)
+                    .wrapContentWidth(Alignment.CenterHorizontally)
+
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                ,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
 

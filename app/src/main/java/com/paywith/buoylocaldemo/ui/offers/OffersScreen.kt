@@ -1,17 +1,20 @@
 package com.paywith.buoylocaldemo.ui.offers
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -47,9 +51,15 @@ fun OffersScreen(appViewModel: AppViewModel) {
     }
 
     Scaffold(
+        containerColor = Color.Transparent,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
-            TopAppBar(title = { Text("Offers") })
+            TopAppBar(
+                title = { Text("Offers") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color.Transparent
+                )
+            )
         }
     ) { padding ->
         OffersScreenContent(
@@ -61,7 +71,9 @@ fun OffersScreen(appViewModel: AppViewModel) {
 
 @Composable
 fun OffersScreenContent(offers: List<OfferUiModel>, modifier: Modifier = Modifier) {
-    LazyColumn(modifier = modifier.fillMaxSize()) {
+    LazyColumn(modifier = modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.background)) {
         items(
             items = offers,
             key = { it.offerId }
@@ -86,7 +98,7 @@ fun OffersScreenContentPreview() {
             merchantName = "Mock Store A",
             shortMerchantAddress = "",
             merchantAddress = "123 Mock St",
-            pointsText = "500 points!"
+            pointsText = "500 pts"
         ),
         OfferUiModel(
             offerId = "102",
@@ -94,7 +106,7 @@ fun OffersScreenContentPreview() {
             merchantName = "Mock Store B",
             shortMerchantAddress = "",
             merchantAddress = "456 Mock St",
-            pointsText = "50 points!"
+            pointsText = "50 pts"
         )
     )
     OffersScreenContent(testOffers)

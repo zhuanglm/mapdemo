@@ -8,5 +8,5 @@ import javax.inject.Inject
 class GetOffersUseCase @Inject constructor(
     private val repository: OffersRepository
 ) {
-    suspend operator fun invoke(query: SearchQuery): List<Offer> = repository.getOffersByQuery(query)
+    suspend operator fun invoke(query: SearchQuery): Result<List<Offer>> = repository.getOffersByQuery(query)
 }

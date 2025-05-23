@@ -1,5 +1,6 @@
 package com.paywith.buoylocaldemo.di
 
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.paywith.buoylocaldemo.data.location.LocationProvider
 import com.paywith.buoylocaldemo.data.remote.ApiService
 import com.paywith.buoylocaldemo.data.repository.OffersRepoImpl
@@ -41,6 +42,7 @@ object AppModule {
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(client)
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 

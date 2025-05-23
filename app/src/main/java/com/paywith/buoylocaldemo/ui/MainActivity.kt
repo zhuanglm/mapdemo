@@ -6,12 +6,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.paywith.buoylocaldemo.ui.login.LoginScreen
 import com.paywith.buoylocaldemo.ui.offers.OffersScreen
 import com.paywith.buoylocaldemo.ui.theme.BuoylocalDemoTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,7 +27,10 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             BuoylocalDemoTheme {
-                OffersScreen(appViewModel)
+                AppBackground(modifier = Modifier.fillMaxWidth()) {
+                    LoginScreen()
+                    //OffersScreen(appViewModel)
+                }
             }
         }
     }

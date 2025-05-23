@@ -5,18 +5,25 @@ import com.paywith.buoylocaldemo.data.remote.ApiService
 import com.paywith.buoylocaldemo.domain.model.Offer
 import com.paywith.buoylocaldemo.domain.model.SearchQuery
 import com.paywith.buoylocaldemo.domain.repository.OffersRepository
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class OffersRepoImpl @Inject constructor(
     private val apiService: ApiService
 ) : OffersRepository {
-    override suspend fun getOffersByQuery(query: SearchQuery): List<Offer> {
-        val response = apiService.getOffersByQuery(query)
-        if (response.isSuccessful) {
-            return response.body()?.map { it.toOffer() } ?: emptyList()
-        } else {
-            throw Exception("Error fetching offers: ${response.code()} ${response.message()}")
+    override suspend fun getOffersByQuery(query: SearchQuery): Result<List<Offer>> {
+        return try {
+            val response = apiService.getOffersByQuery(query)
+            if (response.isSuccessful) {
+                Result.success(response.body()?.map { it.toOffer() } ?: emptyList())
+            } else {
+                Result.failure(HttpException(response))
+                //throw Exception("Error fetching offers: ${response.code()} ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
+
     }
 
     fun OfferDto.toOffer(): Offer {

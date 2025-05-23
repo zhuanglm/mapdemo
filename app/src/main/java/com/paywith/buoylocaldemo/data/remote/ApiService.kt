@@ -8,5 +8,5 @@ import retrofit2.http.POST
 
 interface ApiService {
     @POST("persistence_layer/search")
-    fun getOffersByQuery(@Body searchQuery: SearchQuery): Response<List<OfferDto>>
+    suspend fun getOffersByQuery(@Body searchQuery: SearchQuery): Response<List<OfferDto>>
 }

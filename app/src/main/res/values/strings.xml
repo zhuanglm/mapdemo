@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Buoylocal Demo</string>
+    <string name="app_name">Offers Demo</string>
     <string name="login">Log in</string>
     <string name="forgot_password">Forgot Password?</string>
     <string name="password">Password</string>

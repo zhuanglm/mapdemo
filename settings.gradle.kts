@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Buoylocal Demo"
+rootProject.name = "Offers Demo"
 include(":app")
  

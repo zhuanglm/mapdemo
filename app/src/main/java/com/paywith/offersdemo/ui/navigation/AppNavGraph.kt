@@ -1,5 +1,6 @@
 package com.paywith.offersdemo.ui.navigation
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -7,19 +8,19 @@ import androidx.navigation.compose.composable
 import com.paywith.offersdemo.ui.AppViewModel
 import com.paywith.offersdemo.ui.login.LoginScreen
 import com.paywith.offersdemo.ui.offers.OffersScreen
-import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun AppNavGraph(navController: NavHostController, appViewModel: AppViewModel) {
+fun AppNavGraph(navController: NavHostController, snackbarHostState: SnackbarHostState,
+                appViewModel: AppViewModel) {
     NavHost(
         navController = navController,
         startDestination = NavRoute.Login.route
     ) {
         composable(NavRoute.Login.route) {
-            LoginScreen(onLoginSuccess = {
-                navController.navigate(NavRoute.Offers.route) {
-                    popUpTo(NavRoute.Login.route) { inclusive = true }
-                }
+            LoginScreen(appViewModel,
+                snackbarHostState,
+                onLoginSuccess = {
+                navController.navigateAndClearStack(NavRoute.Offers.route)
             })
         }
 

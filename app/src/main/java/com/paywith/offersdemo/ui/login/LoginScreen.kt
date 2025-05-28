@@ -2,6 +2,7 @@ package com.paywith.offersdemo.ui.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -17,8 +18,17 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,9 +39,50 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.paywith.offersdemo.R
+import com.paywith.offersdemo.data.model.ApiResponse
+import com.paywith.offersdemo.ui.AppViewModel
 
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit) {
+fun LoginScreen(
+    appViewModel: AppViewModel, snackbarHostState: SnackbarHostState,
+    onLoginSuccess: () -> Unit
+) {
+    var phone by remember { mutableStateOf("12565768172") }
+    var password by remember { mutableStateOf("Testing1!") }
+    val loginState by appViewModel.loginState.collectAsState()
+
+    LaunchedEffect(loginState) {
+        if (loginState is ApiResponse.Success) {
+            onLoginSuccess()
+        }
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+        containerColor = Color.Transparent
+    ) { padding ->
+        Box(modifier = Modifier.padding(padding)) {
+            LoginScreenContent(
+                phone = phone,
+                password = password,
+                onPhoneChange = { phone = it },
+                onPasswordChange = { password = it },
+                onLoginClick = {
+                    appViewModel.userLogin(phone, password)
+                }
+            )
+        }
+    }
+}
+
+@Composable
+fun LoginScreenContent(
+    phone: String? = null,
+    password: String? = null,
+    onPhoneChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onLoginClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -57,8 +108,8 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
+                    value = phone ?: "",
+                    onValueChange = onPhoneChange,
                     label = { Text(stringResource(R.string.mobile_number)) },
                     placeholder = { Text("Enter mobile number") },
                     modifier = Modifier.fillMaxWidth()
@@ -67,8 +118,8 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
+                    value = password ?: "",
+                    onValueChange = onPasswordChange,
                     label = { Text(stringResource(R.string.password)) },
                     placeholder = { Text("Enter password") },
                     visualTransformation = PasswordVisualTransformation(),
@@ -87,7 +138,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(
-                    onClick = onLoginSuccess,
+                    onClick = onLoginClick,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
                         .defaultMinSize(minWidth = 180.dp),
@@ -108,5 +159,8 @@ fun LoginScreen(onLoginSuccess: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen {}
+    LoginScreenContent(
+        onPhoneChange = {},
+        onPasswordChange = {}
+    ) { }
 }

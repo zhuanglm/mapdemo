@@ -4,4 +4,5 @@
     <string name="forgot_password">Forgot Password?</string>
     <string name="password">Password</string>
     <string name="mobile_number">Mobile Number</string>
+    <string name="please_check_phone_pass">Please check phone number and password.</string>
 </resources>

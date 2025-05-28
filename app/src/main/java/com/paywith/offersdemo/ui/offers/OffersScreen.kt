@@ -9,12 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -22,11 +17,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.paywith.offersdemo.data.model.ApiResponse
+import com.paywith.offersdemo.ui.AppStandardScreen
 import com.paywith.offersdemo.ui.AppViewModel
 import com.paywith.offersdemo.ui.model.OfferUiModel
 
@@ -41,7 +37,7 @@ fun OffersScreen(appViewModel: AppViewModel) {
     )
 
     val location by appViewModel.locationFlow.collectAsState()
-    val offers by appViewModel.offers.collectAsState()
+    val offersResponse by appViewModel.offers.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(location) {
@@ -50,18 +46,12 @@ fun OffersScreen(appViewModel: AppViewModel) {
         }
     }
 
-    Scaffold(
-        containerColor = Color.Transparent,
-        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-        topBar = {
-            TopAppBar(
-                title = { Text("Offers") },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.Transparent
-                )
-            )
-        }
+    AppStandardScreen(
+        title = "Offers",
+        snackbarHostState = snackbarHostState,
+        modifier = Modifier.fillMaxSize()
     ) { padding ->
+        val offers = (offersResponse as? ApiResponse.Success)?.data ?: emptyList()
         OffersScreenContent(
             offers = offers,
             modifier = Modifier.padding(padding)

@@ -1,7 +1,8 @@
 package com.paywith.offersdemo.data.repository
 
+import com.paywith.offersdemo.data.model.ApiResponse
 import com.paywith.offersdemo.data.model.OfferDto
-import com.paywith.offersdemo.data.remote.ApiService
+import com.paywith.offersdemo.data.network.ApiService
 import com.paywith.offersdemo.domain.model.Offer
 import com.paywith.offersdemo.domain.model.SearchQuery
 import com.paywith.offersdemo.domain.repository.OffersRepository
@@ -11,17 +12,16 @@ import javax.inject.Inject
 class OffersRepoImpl @Inject constructor(
     private val apiService: ApiService
 ) : OffersRepository {
-    override suspend fun getOffersByQuery(query: SearchQuery): Result<List<Offer>> {
+    override suspend fun getOffersByQuery(query: SearchQuery): ApiResponse<List<Offer>> {
         return try {
             val response = apiService.getOffersByQuery(query)
             if (response.isSuccessful) {
-                Result.success(response.body()?.map { it.toOffer() } ?: emptyList())
+                ApiResponse.Success(response.body()?.map { it.toOffer() } ?: emptyList())
             } else {
-                Result.failure(HttpException(response))
-                //throw Exception("Error fetching offers: ${response.code()} ${response.message()}")
+                ApiResponse.Failure("HTTP ${response.code()}", HttpException(response))
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            ApiResponse.Failure(e.message, e)
         }
 
     }

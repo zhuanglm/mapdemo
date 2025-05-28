@@ -4,17 +4,22 @@ import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.paywith.offersdemo.data.model.ApiResponse
 import com.paywith.offersdemo.domain.model.Coords
+import com.paywith.offersdemo.domain.model.CustomerSignUp
 import com.paywith.offersdemo.domain.model.Offer
-import com.paywith.offersdemo.domain.model.SearchQuery
 import com.paywith.offersdemo.domain.model.SearchModifier
+import com.paywith.offersdemo.domain.model.SearchQuery
 import com.paywith.offersdemo.domain.repository.LocationRepository
 import com.paywith.offersdemo.domain.usecase.GetOffersUseCase
+import com.paywith.offersdemo.domain.usecase.LoginUseCase
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -28,25 +33,26 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
+    private val login: LoginUseCase,
     private val getOffers: GetOffersUseCase,
     private val location: LocationRepository
 ) : ViewModel() {
     private val _loading = MutableStateFlow(false)
     val loading: StateFlow<Boolean> = _loading.asStateFlow()
+    private val _errorMessage = MutableSharedFlow<String>()
+    val errorMessage: SharedFlow<String> = _errorMessage
 
-    fun showLoading() {
+    private fun showLoading() {
         _loading.value = true
     }
 
-    fun hideLoading() {
+    private fun hideLoading() {
         _loading.value = false
     }
 
-    val DEFAULT_FILTER_QUERY: String = "All"
+    private val DEFAULT_FILTER_QUERY: String = "All"
     private val searchQuery = SearchQuery(DEFAULT_FILTER_QUERY, SearchModifier.Sort.DEFAULT_SORT_QUERY)
 
-    private val _offers = MutableStateFlow<List<OfferUiModel>>(emptyList())
-    val offers: StateFlow<List<OfferUiModel>> = _offers
     private val _location = MutableStateFlow<Location?>(null)
     val locationFlow: StateFlow<Location?> = _location
 
@@ -56,47 +62,101 @@ class AppViewModel @Inject constructor(
             .distinctUntilChanged()
             .onEach { availableLocation ->
                 Log.d("AppViewModel", "Location available, triggering offers load.")
-                loadMockOffers()
-                //loadOffers()
+                //loadMockOffers()
+                loadOffers()
             }
             .launchIn(viewModelScope)
     }
 
     fun fetchLocation() {
         viewModelScope.launch {
-            //showLoading()
             val loc = location.getCurrentLocation()
             _location.value = loc
             Log.d("LocationDebug", "Location: lat=${loc?.latitude}, lng=${loc?.longitude}")
 
             loc?.let { Coords.fromLocation(it) }?.let { searchQuery.setCoords(it) }
-            //hideLoading()
         }
     }
 
+    suspend fun <T, R> AppViewModel.emitMappedApiResponse(
+        flow: MutableStateFlow<ApiResponse<R>>,
+        sourceCall: suspend () -> ApiResponse<T>,
+        mapper: suspend (T) -> R
+    ) {
+        showLoading()
+        flow.value = ApiResponse.Loading
+        try {
+            when (val result = sourceCall()) {
+                is ApiResponse.Success -> {
+                    val mapped = withContext(Dispatchers.Default) { mapper(result.data) }
+                    flow.value = ApiResponse.Success(mapped)
+                }
+                is ApiResponse.Failure -> {
+                    flow.value = ApiResponse.Failure(result.message, result.exception)
+                    _errorMessage.emit(result.message ?: "Unknown error")
+                }
+                is ApiResponse.Loading -> {
+                    flow.value = ApiResponse.Loading
+                }
+            }
+        } finally {
+            hideLoading()
+        }
+    }
+
+    suspend fun <T> AppViewModel.emitApiResponse(
+        flow: MutableStateFlow<ApiResponse<T>>,
+        sourceCall: suspend () -> ApiResponse<T>
+    ) {
+        showLoading()
+        flow.value = ApiResponse.Loading
+        try {
+            when (val result = sourceCall()) {
+                is ApiResponse.Success -> {
+                    flow.value = result
+                }
+                is ApiResponse.Failure -> {
+                    flow.value = result
+                    _errorMessage.emit(result.message ?: "Unknown error")
+                }
+                is ApiResponse.Loading -> {
+                    flow.value = ApiResponse.Loading
+                }
+            }
+        } finally {
+            hideLoading()
+        }
+    }
+
+
+    private val _offers = MutableStateFlow<ApiResponse<List<OfferUiModel>>>(ApiResponse.Loading)
+    val offers: StateFlow<ApiResponse<List<OfferUiModel>>> = _offers
+
     private fun loadOffers() {
         viewModelScope.launch {
-            showLoading()
+            val userLocation = _location.value
+            val userCoords: Coords? = userLocation?.let { Coords.fromLocation(it) }
 
-            try {
-                val userLocation = _location.value
-                val userCoords: Coords? = userLocation?.let { Coords.fromLocation(it) }
+            emitMappedApiResponse(
+                flow = _offers,
+                sourceCall = { getOffers(searchQuery) },
+                mapper = { offers ->
+                    offers.map { it.toOfferUiModel(userCoords) }
+                }
+            )
+        }
+    }
 
-                val offersResult: Result<List<Offer>> = getOffers(searchQuery)
-                offersResult
-                    .onSuccess { domainOffers ->
-                        val uiOffers: List<OfferUiModel> = withContext(Dispatchers.Default) {
-                            domainOffers.map { it.toOfferUiModel(userCoords) }
-                        }
-                        _offers.value = uiOffers
-                    }
-                    .onFailure { throwable ->
-                        Log.e("AppViewModel", "Failed to load offers: ${throwable.message}", throwable)
-                        _offers.value = emptyList()
-                    }
-            }finally {
-                hideLoading()
-            }
+    private val _loginState = MutableStateFlow<ApiResponse<CustomerSignUp>>(ApiResponse.Loading)
+    val loginState: StateFlow<ApiResponse<CustomerSignUp>> =_loginState
+
+    fun userLogin(phone: String, password: String) {
+
+        viewModelScope.launch {
+            emitApiResponse(
+                flow = _loginState,
+                sourceCall = { login(phone, password) }
+            )
         }
     }
 
@@ -154,7 +214,7 @@ class AppViewModel @Inject constructor(
                 )
                 mockOffers.map { it.toOfferUiModel(userCoords) }
             }
-            _offers.value = uiOffers
+            _offers.value = ApiResponse.Success(uiOffers)
             hideLoading()
         }
     }

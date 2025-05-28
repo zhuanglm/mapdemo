@@ -2,9 +2,12 @@ package com.paywith.offersdemo.di
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.paywith.offersdemo.data.location.LocationProvider
-import com.paywith.offersdemo.data.remote.ApiService
+import com.paywith.offersdemo.data.network.ApiService
+import com.paywith.offersdemo.data.network.AuthInterceptor
+import com.paywith.offersdemo.data.repository.AuthRepoImpl
 import com.paywith.offersdemo.data.repository.OffersRepoImpl
 import com.paywith.offersdemo.data.repository.LocationRepoImpl
+import com.paywith.offersdemo.domain.repository.AuthRepository
 import com.paywith.offersdemo.domain.repository.LocationRepository
 import com.paywith.offersdemo.domain.repository.OffersRepository
 import dagger.Module
@@ -27,11 +30,16 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideAuthInterceptor(): AuthInterceptor = AuthInterceptor()
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient {
         val logging = HttpLoggingInterceptor()
         logging.setLevel(HttpLoggingInterceptor.Level.BODY)
 
         return OkHttpClient.Builder()
+            .addInterceptor(authInterceptor)
             .addInterceptor(logging)
             .build()
     }
@@ -55,6 +63,11 @@ object AppModule {
     @Singleton
     fun provideOffersRepository(apiService: ApiService): OffersRepository =
         OffersRepoImpl(apiService)
+
+    @Provides
+    @Singleton
+    fun provideAuthRepository(apiService: ApiService): AuthRepository =
+        AuthRepoImpl(apiService)
 
     @Provides
     @Singleton

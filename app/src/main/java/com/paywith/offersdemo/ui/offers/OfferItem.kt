@@ -18,6 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -111,7 +112,7 @@ fun OfferItem(obs: OfferUiModel, modifier: Modifier = Modifier) {
         ) {
             Image(
                 painter = pointsBackgroundPainter ,
-                contentDescription = "points",
+                contentDescription = stringResource(R.string.points),
                 modifier = Modifier
                     .matchParentSize()
                 ,
@@ -121,7 +122,7 @@ fun OfferItem(obs: OfferUiModel, modifier: Modifier = Modifier) {
             Text(
                 text = obs.pointsText,
                 style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                color = colorResource(id = R.color.colorPointsBlue), // 确保 R.color.colorPointsBlue 已导入
+                color = colorResource(id = R.color.colorPointsBlue),
                 modifier = Modifier
                     .align(Alignment.Center)
                     .defaultMinSize(minWidth = 80.dp)

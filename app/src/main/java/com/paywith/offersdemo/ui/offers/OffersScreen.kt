@@ -17,17 +17,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.paywith.offersdemo.R
 import com.paywith.offersdemo.data.model.ApiResponse
 import com.paywith.offersdemo.ui.AppStandardScreen
 import com.paywith.offersdemo.ui.AppViewModel
 import com.paywith.offersdemo.ui.model.OfferUiModel
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OffersScreen(appViewModel: AppViewModel) {
     LocationPermissionHandler(
@@ -47,7 +48,7 @@ fun OffersScreen(appViewModel: AppViewModel) {
     }
 
     AppStandardScreen(
-        title = "Offers",
+        title = stringResource(R.string.offers),
         snackbarHostState = snackbarHostState,
         modifier = Modifier.fillMaxSize()
     ) { padding ->

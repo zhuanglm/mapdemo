@@ -5,4 +5,12 @@
     <string name="password">Password</string>
     <string name="mobile_number">Mobile Number</string>
     <string name="please_check_phone_pass">Please check phone number and password.</string>
+    <string name="points">Points</string>
+    <string name="offers">Offers</string>
+    <string name="locations">Locations</string>
+    <string name="search_merchants">Search Merchants</string>
+    <string name="where_to">Where To?</string>
+    <string name="closest">Closest</string>
+    <string name="all">All</string>
+
 </resources>

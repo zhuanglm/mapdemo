@@ -5,6 +5,11 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("com.google.dagger.hilt.android")
     alias(libs.plugins.kotlin.parcelize)
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+}
+
+secrets {
+    propertiesFileName = "secrets.properties"
 }
 
 android {
@@ -79,4 +84,8 @@ dependencies {
     implementation(libs.coil.network.okhttp)
 
     implementation(libs.logging.interceptor)
+
+    // Google Maps Compose (manually specify version)
+    implementation(libs.maps.compose)
+    implementation(libs.play.services.maps)
 }

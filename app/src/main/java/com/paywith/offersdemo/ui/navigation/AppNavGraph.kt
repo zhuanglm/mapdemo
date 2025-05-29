@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.paywith.offersdemo.ui.AppViewModel
+import com.paywith.offersdemo.ui.home.MapScreen
 import com.paywith.offersdemo.ui.login.LoginScreen
 import com.paywith.offersdemo.ui.offers.OffersScreen
 
@@ -20,12 +21,16 @@ fun AppNavGraph(navController: NavHostController, snackbarHostState: SnackbarHos
             LoginScreen(appViewModel,
                 snackbarHostState,
                 onLoginSuccess = {
-                navController.navigateAndClearStack(NavRoute.Offers.route)
+                navController.navigateAndClearStack(NavRoute.Home.route)
             })
         }
 
         composable(NavRoute.Offers.route) {
             OffersScreen(appViewModel)
+        }
+
+        composable(NavRoute.Home.route) {
+            MapScreen(appViewModel)
         }
         /*composable(NavRoute.Home.route) {
             HomeScreen(onItemClick = { id ->

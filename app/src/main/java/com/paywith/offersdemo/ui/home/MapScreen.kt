@@ -59,7 +59,10 @@ import com.paywith.offersdemo.ui.offers.OffersScreenContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapScreen(appViewModel: AppViewModel) {
+fun MapScreen(
+    appViewModel: AppViewModel,
+    onItemClick: (String) -> Unit
+) {
     val scaffoldState = rememberBottomSheetScaffoldState()
     val selectedMerchant = remember { mutableStateOf<Merchant?>(null) }
     val showSortDialog = remember { mutableStateOf(false) }
@@ -96,7 +99,7 @@ fun MapScreen(appViewModel: AppViewModel) {
                         .fillMaxWidth()
                         .heightIn(max = 450.dp)
                 ) {
-                    OffersBottomSheet(offers)
+                    OffersBottomSheet(offers, onItemClick = onItemClick)
                 }
             },
             modifier = Modifier
@@ -141,7 +144,6 @@ fun MapScreen(appViewModel: AppViewModel) {
     }
 }
 
-// ---- 以下是占位 Composables，可以后续逐步实现 ----
 @Composable
 fun ButtonsRow(
     modifier: Modifier = Modifier,
@@ -262,6 +264,7 @@ fun OffersBottomSheet(
     offers: List<OfferUiModel>,
     onSortClick: () -> Unit = {},
     onFilterClick: () -> Unit = {},
+    onItemClick: (String) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -291,7 +294,10 @@ fun OffersBottomSheet(
 
         OffersScreenContent(
             offers = offers,
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            onOfferClick = {offer ->
+                onItemClick(offer.offerId)
+            }
         )
     }
 }

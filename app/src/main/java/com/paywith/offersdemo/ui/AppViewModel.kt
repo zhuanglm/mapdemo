@@ -147,6 +147,12 @@ class AppViewModel @Inject constructor(
         }
     }
 
+    fun getOfferById(offerId: String): OfferUiModel? {
+        val currentOffers = (_offers.value as? ApiResponse.Success)?.data.orEmpty()
+        return currentOffers.find { it.offerId == offerId }
+    }
+
+
     private val _loginState = MutableStateFlow<ApiResponse<CustomerSignUp>>(ApiResponse.Loading)
     val loginState: StateFlow<ApiResponse<CustomerSignUp>> =_loginState
 
@@ -244,12 +250,13 @@ class AppViewModel @Inject constructor(
             "0 pts"
         }
 
-        val shortMerchantAddress = if (userLocation != null) {
+        val distangce = if (userLocation != null) {
             this.getDistanceInMiles(userLocation)
         } else {
             "Distance Unknown"
         }
-        val merchantAddress = shortMerchantAddress + " \u2022 " + this.getBasicAddress()
+        val shortMerchantAddress = this.getBasicAddress()
+        val merchantAddress = this.getFullAddress()
 
         return OfferUiModel(
             merchantName = this.locationName ?: "",
@@ -258,6 +265,7 @@ class AppViewModel @Inject constructor(
             offerId = this.id?.toString() ?: UUID.randomUUID().toString(),
             merchantLogoUrl = this.getLogo(),
             shortMerchantAddress = shortMerchantAddress,
+            distance = distangce
         )
     }
 }

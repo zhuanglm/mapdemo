@@ -12,5 +12,8 @@
     <string name="where_to">Where To?</string>
     <string name="closest">Closest</string>
     <string name="all">All</string>
-
+    <string name="offer">OFFER</string>
+    <string name="merchant">Merchant</string>
+    <string name="distance">Distance</string>
+    <string name="profile">PROFILE</string>
 </resources>

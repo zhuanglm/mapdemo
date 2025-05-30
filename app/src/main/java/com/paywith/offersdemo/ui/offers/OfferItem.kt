@@ -3,6 +3,7 @@ package com.paywith.offersdemo.ui.offers
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
@@ -22,6 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil3.compose.rememberAsyncImagePainter
@@ -34,7 +36,11 @@ import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.R
 
 @Composable
-fun OfferItem(obs: OfferUiModel, modifier: Modifier = Modifier) {
+fun OfferItem(
+    modifier: Modifier = Modifier,
+    obs: OfferUiModel,
+    onClick: () -> Unit
+) {
 
     val marginFive = dimensionResource(id = R.dimen.margin_five)
     val marginTen = dimensionResource(id = R.dimen.margin_ten)
@@ -46,6 +52,7 @@ fun OfferItem(obs: OfferUiModel, modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .background(Color.White)
+            .clickable { onClick() }
             .padding(vertical = 15.dp)
     ) {
         val (profileImage, merchantName, merchantDesc, pointsFrame, divider) = createRefs()
@@ -90,8 +97,11 @@ fun OfferItem(obs: OfferUiModel, modifier: Modifier = Modifier) {
         )
 
         Text(
-            text = obs.merchantAddress,
-            style = MaterialTheme.typography.bodyMedium,
+            text = obs.distance + " \u2022 " + obs.shortMerchantAddress,
+            style = MaterialTheme.typography.bodySmall.copy(
+                fontSize = 11.sp,
+                color = Color(0xFFAAAAAA)
+            ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier.constrainAs(merchantDesc) {

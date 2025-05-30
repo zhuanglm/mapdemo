@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -55,13 +54,18 @@ fun OffersScreen(appViewModel: AppViewModel) {
         val offers = (offersResponse as? ApiResponse.Success)?.data ?: emptyList()
         OffersScreenContent(
             offers = offers,
-            modifier = Modifier.padding(padding)
+            modifier = Modifier.padding(padding),
+            onOfferClick = {}
         )
     }
 }
 
 @Composable
-fun OffersScreenContent(offers: List<OfferUiModel>, modifier: Modifier = Modifier) {
+fun OffersScreenContent(
+    modifier: Modifier = Modifier,
+    offers: List<OfferUiModel>,
+    onOfferClick: (OfferUiModel) -> Unit
+) {
     LazyColumn(modifier = modifier
         .fillMaxSize()
         .background(MaterialTheme.colorScheme.background)) {
@@ -73,7 +77,10 @@ fun OffersScreenContent(offers: List<OfferUiModel>, modifier: Modifier = Modifie
                 obs = offerUiModel,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(0.dp),
+                onClick = {
+                    onOfferClick(offerUiModel)
+                }
             )
         }
     }
@@ -89,7 +96,8 @@ fun OffersScreenContentPreview() {
             merchantName = "Mock Store A",
             shortMerchantAddress = "",
             merchantAddress = "123 Mock St",
-            pointsText = "500 pts"
+            pointsText = "500 pts",
+            distance = "1.2 km"
         ),
         OfferUiModel(
             offerId = "102",
@@ -97,10 +105,11 @@ fun OffersScreenContentPreview() {
             merchantName = "Mock Store B",
             shortMerchantAddress = "",
             merchantAddress = "456 Mock St",
-            pointsText = "50 pts"
+            pointsText = "50 pts",
+            distance = "100.2 mi"
         )
     )
-    OffersScreenContent(testOffers)
+    OffersScreenContent(Modifier,testOffers) {}
 }
 
 @OptIn(ExperimentalPermissionsApi::class)

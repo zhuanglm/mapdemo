@@ -265,7 +265,15 @@ class AppViewModel @Inject constructor(
             offerId = this.id?.toString() ?: UUID.randomUUID().toString(),
             merchantLogoUrl = this.getLogo(),
             shortMerchantAddress = shortMerchantAddress,
-            distance = distangce
+            distance = distangce,
+            offerDetail = this.acquisitionSummary,
+            merchantLocation = this.coordinates?.let { Offer.getLocationFromMerchantLocation(it)},
+            merchantDescription = this.description,
+            merchantWebsite = this.websiteLink,
+            merchantPhoneNumber = this.phone,
+            facebookPageLink = this.facebookLink,
+            instagramPageLink = this.instagramLink,
+            twitterPageLink = this.twitterLink,
         )
     }
 }

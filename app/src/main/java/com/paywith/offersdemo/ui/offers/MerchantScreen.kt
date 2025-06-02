@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
@@ -16,10 +17,8 @@ import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -31,6 +30,8 @@ import coil3.compose.rememberAsyncImagePainter
 import com.paywith.offersdemo.R
 import com.paywith.offersdemo.ui.AppStandardScreen
 import com.paywith.offersdemo.ui.AppViewModel
+import com.paywith.offersdemo.ui.model.OfferUiModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun MerchantScreen(
@@ -57,9 +58,7 @@ fun MerchantScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(padding),
-                bannerURL = it.merchantLogoUrl,
-                merchantName = offer.merchantName,
-                merchantAddress = offer.merchantAddress
+                offer
             )
         }
     }
@@ -67,7 +66,15 @@ fun MerchantScreen(
 }
 
 @Composable
-fun MerchantScreenContent(modifier: Modifier, bannerURL: String, merchantName: String, merchantAddress: String) {
+fun MerchantScreenContent(
+    modifier: Modifier,
+    offerUiModel: OfferUiModel
+) {
+    val bannerURL = offerUiModel.merchantLogoUrl
+    val merchantAddress = offerUiModel.merchantAddress
+    val offerPoints = offerUiModel.pointsText
+    val offerDetails = offerUiModel.offerDetail.orEmpty()
+
     val configuration = LocalConfiguration.current
     val screenHeightDp = configuration.screenHeightDp.dp
 
@@ -97,38 +104,35 @@ fun MerchantScreenContent(modifier: Modifier, bannerURL: String, merchantName: S
         )
 
         val tabTitles = listOf(stringResource(R.string.offer), stringResource(R.string.profile))
-        var selectedTabIndex by remember { mutableIntStateOf(0) }
+        val coroutineScope = rememberCoroutineScope()
+        val pagerState = rememberPagerState { tabTitles.size }
         // Tabs
-        TabRow(selectedTabIndex = selectedTabIndex) {
+        TabRow(selectedTabIndex = pagerState.currentPage) {
             tabTitles.forEachIndexed { index, title ->
                 Tab(
-                    selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index },
+                    selected = pagerState.currentPage == index,
+                    onClick = {
+                        coroutineScope.launch {
+                            pagerState.scrollToPage(index)
+                        }
+                    },
                     text = { Text(text = title) }
                 )
             }
         }
 
         // Pager
-        val pagerState = rememberPagerState { tabTitles.size }
         HorizontalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxWidth().wrapContentHeight()
         ) { page ->
             when (page) {
-                0 -> OfferTabContent()   // 替换为你的 offer fragment 内容
-                1 -> ProfileTabContent() // 替换为你的 profile fragment 内容
+                0 -> OfferTabContent(
+                    offerPoints = offerPoints,
+                    offerDetails = offerDetails
+                    )
+                1 -> ProfileTabContent(offerUiModel)
             }
         }
     }
-}
-
-@Composable
-fun OfferTabContent() {
-
-}
-
-@Composable
-fun ProfileTabContent() {
-
 }

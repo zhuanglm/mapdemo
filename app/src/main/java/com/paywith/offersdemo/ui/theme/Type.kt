@@ -29,5 +29,10 @@ val Typography = Typography(
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp
+    ),
+    headlineLarge = TextStyle(
+        fontSize = 42.sp,
+        fontWeight = FontWeight.Bold,
+        color = DeepBlue
     )
 )

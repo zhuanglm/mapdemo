@@ -16,4 +16,13 @@
     <string name="merchant">Merchant</string>
     <string name="distance">Distance</string>
     <string name="profile">PROFILE</string>
+    <string name="about">About</string>
+    <string name="address">Address</string>
+    <string name="get_directions">Get Directions</string>
+    <string name="phone">Phone</string>
+    <string name="website">Website</string>
+    <string name="online_ordering">Online Ordering</string>
+    <string name="facebook">Facebook</string>
+    <string name="twitter">Twitter</string>"
+    <string name="instagram">Instagram</string>
 </resources>

@@ -2,6 +2,8 @@ package com.paywith.offersdemo.ui
 
 import android.location.Location
 import android.util.Log
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paywith.offersdemo.data.model.ApiResponse
@@ -10,6 +12,8 @@ import com.paywith.offersdemo.domain.model.CustomerSignUp
 import com.paywith.offersdemo.domain.model.Offer
 import com.paywith.offersdemo.domain.model.SearchModifier
 import com.paywith.offersdemo.domain.model.SearchQuery
+import com.paywith.offersdemo.domain.model.SearchQuery.Companion.DEFAULT_LAT
+import com.paywith.offersdemo.domain.model.SearchQuery.Companion.DEFAULT_LNG
 import com.paywith.offersdemo.domain.repository.LocationRepository
 import com.paywith.offersdemo.domain.usecase.GetOffersUseCase
 import com.paywith.offersdemo.domain.usecase.LoginUseCase
@@ -68,13 +72,32 @@ class AppViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
+    fun onResume() {
+        fetchLocation()
+    }
+
     fun fetchLocation() {
         viewModelScope.launch {
             val loc = location.getCurrentLocation()
-            _location.value = loc
             Log.d("LocationDebug", "Location: lat=${loc?.latitude}, lng=${loc?.longitude}")
 
-            loc?.let { Coords.fromLocation(it) }?.let { searchQuery.setCoords(it) }
+            val finalLocation = loc ?: Location("").apply {
+                latitude = DEFAULT_LAT
+                longitude = DEFAULT_LNG
+            }
+
+            _location.value = finalLocation
+            searchQuery.setCoords(Coords.fromLocation(finalLocation))
+        }
+    }
+
+    private val _locations = mutableStateOf<List<String>>(emptyList())
+    val locations: State<List<String>> = _locations
+
+    fun onSearchRegionChange(query: String) {
+        viewModelScope.launch {
+            _locations.value = location.searchRegions(query)
+            Log.d("SearchDebug", "Locations: $locations")
         }
     }
 
@@ -132,14 +155,20 @@ class AppViewModel @Inject constructor(
     private val _offers = MutableStateFlow<ApiResponse<List<OfferUiModel>>>(ApiResponse.Loading)
     val offers: StateFlow<ApiResponse<List<OfferUiModel>>> = _offers
 
-    private fun loadOffers() {
+    fun loadOffers(query: String? = null) {
         viewModelScope.launch {
             val userLocation = _location.value
             val userCoords: Coords? = userLocation?.let { Coords.fromLocation(it) }
 
+            val search = if (query?.isNotBlank() == true) {
+                searchQuery.copy(query = query)
+            } else {
+                searchQuery
+            }
+
             emitMappedApiResponse(
                 flow = _offers,
-                sourceCall = { getOffers(searchQuery) },
+                sourceCall = { getOffers(search) },
                 mapper = { offers ->
                     offers.map { it.toOfferUiModel(userCoords) }
                 }
@@ -152,6 +181,10 @@ class AppViewModel @Inject constructor(
         return currentOffers.find { it.offerId == offerId }
     }
 
+    fun getOffers(): List<OfferUiModel> {
+        val currentOffers = (_offers.value as? ApiResponse.Success)?.data.orEmpty()
+        return currentOffers
+    }
 
     private val _loginState = MutableStateFlow<ApiResponse<CustomerSignUp>>(ApiResponse.Loading)
     val loginState: StateFlow<ApiResponse<CustomerSignUp>> =_loginState

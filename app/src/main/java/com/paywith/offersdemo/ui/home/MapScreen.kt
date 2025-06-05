@@ -1,6 +1,5 @@
 package com.paywith.offersdemo.ui.home
 
-import android.location.Location
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -28,14 +27,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -43,8 +45,13 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
@@ -55,19 +62,41 @@ import com.paywith.offersdemo.ui.AppStandardScreen
 import com.paywith.offersdemo.ui.AppViewModel
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.ui.offers.LocationPermissionHandler
+import com.paywith.offersdemo.ui.offers.OfferItem
 import com.paywith.offersdemo.ui.offers.OffersScreenContent
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen(
     appViewModel: AppViewModel,
-    onItemClick: (String) -> Unit
+    onItemClick: (String) -> Unit,
+    onSearchClick: () -> Unit,
+    onWhereToClick: () -> Unit
 ) {
     val scaffoldState = rememberBottomSheetScaffoldState()
-    val selectedMerchant = remember { mutableStateOf<Merchant?>(null) }
+    val selectedOffer = remember { mutableStateOf<OfferUiModel?>(null) }
     val showSortDialog = remember { mutableStateOf(false) }
     val showFilterDialog = remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
+    val isProgrammaticAnimationInProgress = remember { mutableStateOf(false) }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(Unit) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                appViewModel.onResume()
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
 
     LocationPermissionHandler(
         onPermissionGranted = {
@@ -113,17 +142,47 @@ fun MapScreen(
             ) {
 
                 location?.let { loc ->
+                    val latLng = LatLng(loc.latitude, loc.longitude)
+
+                    val cameraPositionState = rememberCameraPositionState {
+                        position = CameraPosition.fromLatLngZoom(latLng, 12f)
+                    }
+
+                    // observing camera movement，clear selected Offer
+                    LaunchedEffect(cameraPositionState) {
+                        snapshotFlow { cameraPositionState.isMoving }
+                            .collectLatest { isMoving ->
+                                if (isMoving && !isProgrammaticAnimationInProgress.value) {
+                                    selectedOffer.value = null
+                                }
+                            }
+                    }
+
+                    val coroutineScope = rememberCoroutineScope()
+
                     GoogleMapView(
-                        loc,
-                        onMarkerClick = { merchant ->
-                            selectedMerchant.value = merchant
+                        offers = offers,
+                        cameraPositionState = cameraPositionState,
+                        isProgrammaticAnimationInProgress = isProgrammaticAnimationInProgress,
+                        onMarkerClick = { offer ->
+                            selectedOffer.value = offer
+                            coroutineScope.launch {
+                                scaffoldState.bottomSheetState.partialExpand()
+                            }
                         }
                     )
                 }
 
-                selectedMerchant.value?.let { merchant ->
-                    MerchantMapBox(merchant)
+                selectedOffer.value?.let {
+                    MerchantMapBox(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 100.dp), // Adjust based on BottomSheet height
+                        offer = it,
+                        onClick = onItemClick
+                    )
                 }
+
 
                 // 排序 / 筛选弹窗
                 if (showSortDialog.value) {
@@ -138,7 +197,10 @@ fun MapScreen(
                 ButtonsRow(
                     modifier = Modifier.padding(top = 10.dp),
                     leftButtonText = stringResource(R.string.search_merchants),
-                    rightButtonText = stringResource(R.string.where_to))
+                    onLeftClick = { onSearchClick() },
+                    rightButtonText = stringResource(R.string.where_to),
+                    onRightClick = { onWhereToClick() }
+                )
             }
         }
     }
@@ -234,27 +296,68 @@ fun FielterButtonsRowPreview() {
 }
 
 @Composable
-fun GoogleMapView(location: Location, onMarkerClick: (Merchant) -> Unit) {
-    val latLng = LatLng(location.latitude, location.longitude)
+fun GoogleMapView(
+    offers: List<OfferUiModel>,
+    cameraPositionState: CameraPositionState,
+    isProgrammaticAnimationInProgress: MutableState<Boolean>,
+    onMarkerClick: (OfferUiModel) -> Unit
+) {
+    // move to first offer
+    LaunchedEffect(offers) {
+        isProgrammaticAnimationInProgress.value = true
+        if (offers.isNotEmpty()) {
+            val firstLatLng = offers[0].merchantLocation?.let {
+                LatLng(it.latitude, it.longitude)
+            }
+            try {
+                firstLatLng?.let { CameraUpdateFactory.newLatLngZoom(it, 12f) }
+                    ?.let { cameraPositionState.animate(it) }
+            } finally {
+                isProgrammaticAnimationInProgress.value = false
+            }
+
+        }
+    }
+
+    val coroutineScope = rememberCoroutineScope()
 
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
-        cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(latLng, 12f)
-        },
-        onMapClick = {
-            // Handle general map click
-        }
+        cameraPositionState = cameraPositionState
+
     ) {
-        Marker(
-            state = MarkerState(position = latLng),
-            title = "Singapore",
-            snippet = "Marker in Singapore",
-            onClick = {
-                onMarkerClick(Merchant("Singapore"))
-                true
+        offers.forEach { offer ->
+
+            val loc = offer.merchantLocation
+            if (loc != null) {
+                val currentLatLng = LatLng(loc.latitude, loc.longitude)
+
+                Marker(
+                    state = MarkerState(
+                        position = currentLatLng
+                    ),
+                    title = offer.merchantName,
+                    snippet = offer.merchantAddress,
+                    onClick = {
+                        onMarkerClick(offer)
+
+                        coroutineScope.launch {
+                            isProgrammaticAnimationInProgress.value = true
+                            try {
+                                cameraPositionState.animate(
+                                    update = CameraUpdateFactory.newLatLngZoom(currentLatLng, 18f),
+                                    durationMs = 600
+                                )
+                            } finally {
+                                isProgrammaticAnimationInProgress.value = false
+                            }
+                        }
+                        true
+                    }
+                )
             }
-        )
+        }
+
     }
 }
 
@@ -295,7 +398,7 @@ fun OffersBottomSheet(
         OffersScreenContent(
             offers = offers,
             modifier = Modifier.weight(1f),
-            onOfferClick = {offer ->
+            onOfferClick = { offer ->
                 onItemClick(offer.offerId)
             }
         )
@@ -304,16 +407,25 @@ fun OffersBottomSheet(
 
 
 @Composable
-fun MerchantMapBox(merchant: Merchant) {
+fun MerchantMapBox(
+    modifier: Modifier = Modifier,
+    offer: OfferUiModel,
+    onClick: (String) -> Unit = {}
+) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp)
-            .background(Color.White)
-            .shadow(4.dp, RoundedCornerShape(12.dp))
-            .padding(16.dp)
+            .height(100.dp)
+            .padding(top = 0.dp, bottom = 16.dp, start = 32.dp, end = 32.dp )
+            .background(Color.White, shape = RoundedCornerShape(12.dp))
     ) {
-        Text("Selected Merchant: ${merchant.name}")
+        OfferItem(
+            obs = offer,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(0.dp),
+            onClick = { onClick(offer.offerId) }
+        )
     }
 }
 
@@ -336,6 +448,3 @@ fun FilterDialog(onDismiss: () -> Unit) {
         confirmButton = { TextButton(onClick = onDismiss) { Text("OK") } }
     )
 }
-
-// ---- 数据模型占位 ----
-data class Merchant(val name: String)

@@ -33,11 +33,11 @@ data class SearchQuery(
 
     companion object {
         /**
-         * Generic coords for Bangor, Maine
+         * Generic coords for your location
          */
-        private const val BANGOR_LAT = 44.808147
-        private const val BANGOR_LONG = -68.795013
-        const val DEFAULT_LAT = BANGOR_LAT
-        const val DEFAULT_LNG = BANGOR_LONG
+        private const val CURRENT_LAT = 45.42508
+        private const val CURRENT_LONG = -75.70046
+        const val DEFAULT_LAT = CURRENT_LAT
+        const val DEFAULT_LNG = CURRENT_LONG
     }
 }

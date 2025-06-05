@@ -1,5 +1,6 @@
-package com.paywith.offersdemo.ui.offers
+package com.paywith.offersdemo.ui.home
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -16,7 +17,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -41,10 +41,6 @@ fun MerchantScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(Unit) {
-        snackbarHostState.showSnackbar("offerid: $offerID")
-    }
-
     val offer = appViewModel.getOfferById(offerID)
 
     AppStandardScreen(
@@ -65,6 +61,7 @@ fun MerchantScreen(
 
 }
 
+@SuppressLint("ConfigurationScreenWidthHeight")
 @Composable
 fun MerchantScreenContent(
     modifier: Modifier,

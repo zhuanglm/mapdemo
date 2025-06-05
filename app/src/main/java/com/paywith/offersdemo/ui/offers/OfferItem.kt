@@ -34,6 +34,7 @@ import coil3.size.Size
 import coil3.transform.CircleCropTransformation
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.R
+import com.paywith.offersdemo.ui.theme.ColorSearchHint
 
 @Composable
 fun OfferItem(
@@ -100,7 +101,7 @@ fun OfferItem(
             text = obs.distance + " \u2022 " + obs.shortMerchantAddress,
             style = MaterialTheme.typography.bodySmall.copy(
                 fontSize = 11.sp,
-                color = Color(0xFFAAAAAA)
+                color = ColorSearchHint
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
@@ -148,6 +149,7 @@ fun OfferItem(
         HorizontalDivider(
             modifier = Modifier.constrainAs(divider) {
                 start.linkTo(merchantDesc.start)
+                end.linkTo(parent.end, margin = marginTwenty)
                 bottom.linkTo(parent.bottom)
                 width = Dimension.fillToConstraints
             },

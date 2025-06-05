@@ -8,4 +8,7 @@ sealed class NavRoute(val route: String) {
     data class Detail(val id: String) : NavRoute("detail/{id}") {
         fun createRoute(id: String) = "detail/$id"
     }
+
+    data object SearchMerchant : NavRoute("search_merchant")
+    data object SearchRegion : NavRoute("search_region")
 }

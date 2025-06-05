@@ -25,4 +25,9 @@
     <string name="facebook">Facebook</string>
     <string name="twitter">Twitter</string>"
     <string name="instagram">Instagram</string>
+    <string name="cancel">Cancel</string>
+    <string name="search">Search</string>
+    <string name="neighborhood_city_zip_code">Neighborhood, city, zip code</string>
+    <string name="current_location">Current Location</string>
+    <string name="suggested_location">SUGGESTED LOCATIONS</string>
 </resources>

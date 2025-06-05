@@ -1,9 +1,8 @@
-package com.paywith.offersdemo.ui.offers
+package com.paywith.offersdemo.ui.home
 
 import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,7 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
+import androidx.core.net.toUri
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
@@ -49,7 +48,6 @@ import com.paywith.offersdemo.R
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.ui.theme.LightBlue
 import com.paywith.offersdemo.ui.theme.LightGrey
-import androidx.core.net.toUri
 
 @Composable
 fun OfferTabContent(

@@ -10,8 +10,10 @@ import androidx.navigation.navArgument
 import com.paywith.offersdemo.ui.AppViewModel
 import com.paywith.offersdemo.ui.home.MapScreen
 import com.paywith.offersdemo.ui.login.LoginScreen
-import com.paywith.offersdemo.ui.offers.MerchantScreen
+import com.paywith.offersdemo.ui.home.MerchantScreen
 import com.paywith.offersdemo.ui.offers.OffersScreen
+import com.paywith.offersdemo.ui.search.SearchMerchantScreen
+import com.paywith.offersdemo.ui.search.SearchRegionScreen
 
 @Composable
 fun AppNavGraph(navController: NavHostController, snackbarHostState: SnackbarHostState,
@@ -37,7 +39,14 @@ fun AppNavGraph(navController: NavHostController, snackbarHostState: SnackbarHos
                 appViewModel,
                 onItemClick = { id ->
                     navController.navigate(NavRoute.Detail(id).createRoute(id))
-                })
+                },
+                onSearchClick = {
+                    navController.navigate(NavRoute.SearchMerchant.route)
+                },
+                onWhereToClick = {
+                    navController.navigate(NavRoute.SearchRegion.route)
+                }
+            )
         }
 
         composable(
@@ -49,5 +58,12 @@ fun AppNavGraph(navController: NavHostController, snackbarHostState: SnackbarHos
                 onBackClick = {navController.popBackStack()})
         }
 
+        composable(NavRoute.SearchMerchant.route) {
+            SearchMerchantScreen(appViewModel, onBackClick = {navController.popBackStack()})
+        }
+
+        composable(NavRoute.SearchRegion.route) {
+            SearchRegionScreen(appViewModel, onBackClick = {navController.popBackStack()})
+        }
     }
 }

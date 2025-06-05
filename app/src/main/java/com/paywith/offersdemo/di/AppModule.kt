@@ -1,5 +1,7 @@
 package com.paywith.offersdemo.di
 
+import android.content.Context
+import com.google.android.libraries.places.api.net.PlacesClient
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.paywith.offersdemo.data.location.LocationProvider
 import com.paywith.offersdemo.data.network.ApiService
@@ -13,12 +15,14 @@ import com.paywith.offersdemo.domain.repository.OffersRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
+import com.google.android.libraries.places.api.Places
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -72,6 +76,13 @@ object AppModule {
     @Provides
     @Singleton
     fun provideLocationRepository(
-        locationProvider: LocationProvider
-    ): LocationRepository = LocationRepoImpl(locationProvider)
+        locationProvider: LocationProvider,
+        placesClient: PlacesClient
+    ): LocationRepository = LocationRepoImpl(locationProvider, placesClient)
+
+    @Provides
+    @Singleton
+    fun providePlacesClient(@ApplicationContext context: Context): PlacesClient {
+        return Places.createClient(context)
+    }
 }

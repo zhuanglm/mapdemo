@@ -11,7 +11,14 @@
     <string name="search_merchants">Search Merchants</string>
     <string name="where_to">Where To?</string>
     <string name="closest">Closest</string>
+    <string name="best_loyalty">Best Loyalty</string>
     <string name="all">All</string>
+    <string name="eat">Eat</string>
+    <string name="shop">Shop</string>
+    <string name="play">Play</string>
+    <string name="stay">Stay</string>
+    <string name="sort_by">Sort results By</string>
+    <string name="filter_by">Filter results By</string>
     <string name="offer">OFFER</string>
     <string name="merchant">Merchant</string>
     <string name="distance">Distance</string>

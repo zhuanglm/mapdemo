@@ -35,11 +35,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.paywith.offersdemo.R
 import com.paywith.offersdemo.ui.model.OfferUiModel
+import com.paywith.offersdemo.ui.model.SortOption
 import com.paywith.offersdemo.ui.offers.OffersScreenContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -54,23 +56,25 @@ fun BottomSheet(
     scaffoldState: BottomSheetScaffoldState,
     offers: List<OfferUiModel>,
     filterOptions: List<String>,
-    onSortClick: () -> Unit = {},
-    onFilterClick: () -> Unit = {},
+    onSortClick: (String) -> Unit = {},
+    onFilterClick: (String) -> Unit = {},
     onItemClick: (String) -> Unit
 ) {
-    val sortOptions = listOf(stringResource(R.string.closest), stringResource(R.string.best_loyalty))
-
     val allText = stringResource(R.string.all)
     val fullFilterOptions = remember(filterOptions) {
         listOf(allText) + filterOptions
     }
 
-    var selectedSort by remember { mutableStateOf(sortOptions.firstOrNull() ?: "") }
+    val sortOptions = SortOption.all
+    val sortOptionItems = sortOptions.map { stringResource(it.labelResId) }
+    var selectedSort by remember { mutableStateOf(SortOption.default()) }
     var selectedFilter by remember { mutableStateOf(allText) }
     var expandedSection by remember { mutableStateOf(ExpandedSection.NONE) }
     var restoreToPartial by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val resources = context.resources
 
     Column(
         modifier = Modifier
@@ -82,7 +86,7 @@ fun BottomSheet(
         ButtonsRow(
             leftIcon = ImageVector.vectorResource(R.drawable.ic_sort),
             rightIcon = ImageVector.vectorResource(R.drawable.ic_filter_eat),
-            leftButtonText = selectedSort,
+            leftButtonText = stringResource( selectedSort.labelResId),
             rightButtonText = selectedFilter,
             onLeftClick = {
                 handleSectionClick(
@@ -122,9 +126,13 @@ fun BottomSheet(
             ExpandedSection.SORT -> {
                 SelectableOptionGroupWrapper(
                     titleResId = R.string.sort_by,
-                    options = sortOptions,
-                    selectedOption = selectedSort,
-                    onOptionSelected = { selectedSort = it },
+                    options = sortOptionItems,
+                    selectedOption = stringResource(selectedSort.labelResId),
+                    onOptionSelected = {selectedLabel ->
+                        SortOption.fromLabelString(selectedLabel, resources)?.let { selected ->
+                            selectedSort = selected
+                            onSortClick(selected.queryValue)
+                        } },
                     restoreToPartial = restoreToPartial,
                     onRestoreChange = { restoreToPartial = it },
                     scaffoldState = scaffoldState,
@@ -139,7 +147,7 @@ fun BottomSheet(
                     selectedOption = selectedFilter,
                     onOptionSelected = {
                         selectedFilter = it
-                        onFilterClick()
+                        onFilterClick(selectedFilter)
                                        },
                     restoreToPartial = restoreToPartial,
                     onRestoreChange = { restoreToPartial = it },

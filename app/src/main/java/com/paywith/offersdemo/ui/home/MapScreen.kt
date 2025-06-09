@@ -127,8 +127,12 @@ fun MapScreen(
                         offers,
                         filterOptions,
                         onItemClick = onItemClick,
-                        onSortClick = { },
-                        onFilterClick = {}
+                        onSortClick = {
+                            appViewModel.updateSort(it)
+                        },
+                        onFilterClick = {
+                            appViewModel.updateFilter(it)
+                        }
                     )
                 }
             },

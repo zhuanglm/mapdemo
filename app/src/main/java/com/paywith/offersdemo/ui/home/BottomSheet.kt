@@ -29,7 +29,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -54,17 +53,22 @@ enum class ExpandedSection {
 fun BottomSheet(
     scaffoldState: BottomSheetScaffoldState,
     offers: List<OfferUiModel>,
+    filterOptions: List<String>,
     onSortClick: () -> Unit = {},
     onFilterClick: () -> Unit = {},
     onItemClick: (String) -> Unit
 ) {
-    var selectedSort by remember { mutableIntStateOf(R.string.closest) }
-    var selectedFilter by remember { mutableIntStateOf(R.string.all) }
+    val sortOptions = listOf(stringResource(R.string.closest), stringResource(R.string.best_loyalty))
+
+    val allText = stringResource(R.string.all)
+    val fullFilterOptions = remember(filterOptions) {
+        listOf(allText) + filterOptions
+    }
+
+    var selectedSort by remember { mutableStateOf(sortOptions.firstOrNull() ?: "") }
+    var selectedFilter by remember { mutableStateOf(allText) }
     var expandedSection by remember { mutableStateOf(ExpandedSection.NONE) }
     var restoreToPartial by remember { mutableStateOf(false) }
-
-    val sortOptions = listOf(R.string.closest, R.string.best_loyalty)
-    val filterOptions = listOf(R.string.all, R.string.eat, R.string.shop, R.string.play, R.string.stay)
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -78,8 +82,8 @@ fun BottomSheet(
         ButtonsRow(
             leftIcon = ImageVector.vectorResource(R.drawable.ic_sort),
             rightIcon = ImageVector.vectorResource(R.drawable.ic_filter_eat),
-            leftButtonText = stringResource(selectedSort),
-            rightButtonText = stringResource(selectedFilter),
+            leftButtonText = selectedSort,
+            rightButtonText = selectedFilter,
             onLeftClick = {
                 handleSectionClick(
                     targetSection = ExpandedSection.SORT,
@@ -131,9 +135,12 @@ fun BottomSheet(
             ExpandedSection.FILTER -> {
                 SelectableOptionGroupWrapper(
                     titleResId = R.string.filter_by,
-                    options = filterOptions,
+                    options = fullFilterOptions,
                     selectedOption = selectedFilter,
-                    onOptionSelected = { selectedFilter = it },
+                    onOptionSelected = {
+                        selectedFilter = it
+                        onFilterClick()
+                                       },
                     restoreToPartial = restoreToPartial,
                     onRestoreChange = { restoreToPartial = it },
                     scaffoldState = scaffoldState,
@@ -208,9 +215,9 @@ fun shouldRestoreToPartial(
 @Composable
 fun SelectableOptionGroupWrapper(
     @StringRes titleResId: Int,
-    options: List<Int>,
-    selectedOption: Int,
-    onOptionSelected: (Int) -> Unit,
+    options: List<String>,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit,
     restoreToPartial: Boolean,
     onRestoreChange: (Boolean) -> Unit,
     scaffoldState: BottomSheetScaffoldState,

@@ -1,5 +1,29 @@
 package com.paywith.offersdemo.ui.home
 
+/**
+ * Project: Offers Demo
+ * Company: paywith.com
+ * File: MapScreen.kt
+ * Created: 2025-06-06
+ * Developer: Ray Z
+ *
+ * Description:
+ * This file defines the `MapScreen` composable, which serves as the main home screen of the app.
+ * It integrates a Google Map view with markers representing merchant offers, a BottomSheet
+ * showing offer lists, and top-level actions for search and location targeting.
+ *
+ * Key features include:
+ * - `BottomSheetScaffold` to show expandable offer listings.
+ * - `GoogleMapView` with interactive markers and camera state management.
+ * - `MerchantMapBox` to preview the currently selected offer.
+ * - Lifecycle-aware location fetching via `AppViewModel`.
+ * - ButtonsRow for search and location actions.
+ *
+ * This screen is the central UI for users to explore location-based offers.
+ *
+ * All rights reserved © paywith.com.
+ */
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -87,6 +111,7 @@ fun MapScreen(
         snackbarHostState = snackbarHostState,
     ) { padding ->
         val offers = (offersResponse as? ApiResponse.Success)?.data ?: emptyList()
+        val filterOptions = appViewModel.getFilterOptions()
 
         BottomSheetScaffold(
             scaffoldState = scaffoldState,
@@ -99,7 +124,11 @@ fun MapScreen(
                 ) {
                     BottomSheet(
                         scaffoldState = scaffoldState,
-                        offers, onItemClick = onItemClick
+                        offers,
+                        filterOptions,
+                        onItemClick = onItemClick,
+                        onSortClick = { },
+                        onFilterClick = {}
                     )
                 }
             },

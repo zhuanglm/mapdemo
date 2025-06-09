@@ -2,6 +2,7 @@ package com.paywith.offersdemo.data.repository
 
 import com.paywith.offersdemo.data.model.ApiResponse
 import com.paywith.offersdemo.data.model.OfferDto
+import com.paywith.offersdemo.data.model.OfferTags
 import com.paywith.offersdemo.data.network.ApiService
 import com.paywith.offersdemo.domain.model.Offer
 import com.paywith.offersdemo.domain.model.SearchQuery
@@ -26,7 +27,7 @@ class OffersRepoImpl @Inject constructor(
 
     }
 
-    fun OfferDto.toOffer(): Offer {
+    private fun OfferDto.toOffer(): Offer {
         return Offer(
             id = this.id,
             merchantId = this.merchantId,
@@ -68,5 +69,25 @@ class OffersRepoImpl @Inject constructor(
             updatedAt = this.updatedAt,
             onlineOrderingLink = this.onlineOrderingLink
         )
+    }
+
+
+    override suspend fun getOfferTags(): ApiResponse<OfferTags> {
+        return try {
+            val response = apiService.getOfferTags()
+            if (response.isSuccessful) {
+                val offerTags = response.body()
+                if (offerTags != null) {
+                    ApiResponse.Success(offerTags)
+                } else {
+                    ApiResponse.Failure("Response body is null", null)
+                }
+            } else {
+                ApiResponse.Failure("HTTP ${response.code()}", HttpException(response))
+            }
+        } catch (e: Exception) {
+            ApiResponse.Failure(e.message, e)
+        }
+
     }
 }

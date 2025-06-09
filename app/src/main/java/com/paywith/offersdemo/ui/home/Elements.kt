@@ -150,9 +150,9 @@ fun FielterButtonsRowPreview() {
 @Composable
 fun SelectableOptionGroup(
     title: String,
-    options: List<Int>,
-    selectedOption: Int,
-    onOptionSelected: (Int) -> Unit
+    options: List<String>,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit
 ) {
     Column(modifier = Modifier
         .padding(16.dp),
@@ -179,7 +179,8 @@ fun SelectableOptionGroup(
                     selected = (option == selectedOption),
                     onClick = null // handled by Row
                 )
-                Text(stringResource(option), modifier = Modifier.padding(start = 8.dp))
+                Text(
+                    text = option, modifier = Modifier.padding(start = 8.dp))
             }
         }
 
@@ -192,10 +193,12 @@ fun SelectableOptionGroup(
 @Preview(showBackground = true)
 @Composable
 fun SelectableOptionGroupPreview() {
-    var selectedOption by remember { mutableStateOf(R.string.closest) }
+    val closestText = stringResource(R.string.closest)
+    var selectedOption by remember { mutableStateOf(closestText) }
+
     val options = listOf(
-        R.string.closest,
-        R.string.best_loyalty
+        stringResource(R.string.closest),
+        stringResource(R.string.best_loyalty)
     )
 
     MaterialTheme {

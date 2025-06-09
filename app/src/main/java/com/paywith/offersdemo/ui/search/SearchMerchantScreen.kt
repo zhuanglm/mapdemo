@@ -69,7 +69,7 @@ fun SearchMerchantScreen(
                 searchQuery = searchQuery,
                 onQueryChange = { searchQuery = it },
                 onSearchClick = {
-                    appViewModel.loadOffers(searchQuery)
+                    appViewModel.searchOffersByQuery(searchQuery)
                 },
                 onCancelClick = {
                     //clear search query and load offers

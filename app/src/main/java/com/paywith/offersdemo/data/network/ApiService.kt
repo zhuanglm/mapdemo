@@ -3,9 +3,11 @@ package com.paywith.offersdemo.data.network
 import com.paywith.offersdemo.data.model.CustomerDto
 import com.paywith.offersdemo.data.model.CustomerWrapper
 import com.paywith.offersdemo.data.model.OfferDto
+import com.paywith.offersdemo.data.model.OfferTags
 import com.paywith.offersdemo.domain.model.SearchQuery
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface ApiService {
@@ -14,4 +16,10 @@ interface ApiService {
 
     @POST("customers/sign_in")
     suspend fun userLogin(@Body customerWrapper: CustomerWrapper): Response<CustomerDto>
+
+    /**
+     * load tag types (offer filters)
+     */
+    @GET("tag_types")
+    suspend fun getOfferTags(): Response<OfferTags>
 }

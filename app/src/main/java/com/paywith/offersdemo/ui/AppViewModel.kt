@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.paywith.offersdemo.data.model.ApiResponse
+import com.paywith.offersdemo.data.model.OfferTags
 import com.paywith.offersdemo.domain.model.Coords
 import com.paywith.offersdemo.domain.model.CustomerSignUp
 import com.paywith.offersdemo.domain.model.Offer
@@ -16,6 +17,7 @@ import com.paywith.offersdemo.domain.model.SearchQuery.Companion.DEFAULT_LAT
 import com.paywith.offersdemo.domain.model.SearchQuery.Companion.DEFAULT_LNG
 import com.paywith.offersdemo.domain.repository.LocationRepository
 import com.paywith.offersdemo.domain.usecase.GetOffersUseCase
+import com.paywith.offersdemo.domain.usecase.GetOfferTagsUseCase
 import com.paywith.offersdemo.domain.usecase.LoginUseCase
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,6 +41,7 @@ import javax.inject.Inject
 class AppViewModel @Inject constructor(
     private val login: LoginUseCase,
     private val getOffers: GetOffersUseCase,
+    private val getOfferTags: GetOfferTagsUseCase,
     private val location: LocationRepository
 ) : ViewModel() {
     private val _loading = MutableStateFlow(false)
@@ -68,6 +71,7 @@ class AppViewModel @Inject constructor(
                 Log.d("AppViewModel", "Location available, triggering offers load.")
                 //loadMockOffers()
                 loadOffers()
+                loadOfferTags()
             }
             .launchIn(viewModelScope)
     }
@@ -101,7 +105,7 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    suspend fun <T, R> AppViewModel.emitMappedApiResponse(
+    private suspend fun <T, R> emitMappedApiResponse(
         flow: MutableStateFlow<ApiResponse<R>>,
         sourceCall: suspend () -> ApiResponse<T>,
         mapper: suspend (T) -> R
@@ -127,7 +131,7 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    suspend fun <T> AppViewModel.emitApiResponse(
+    private suspend fun <T> emitApiResponse(
         flow: MutableStateFlow<ApiResponse<T>>,
         sourceCall: suspend () -> ApiResponse<T>
     ) {
@@ -186,6 +190,20 @@ class AppViewModel @Inject constructor(
         return currentOffers
     }
 
+    fun updateSort(sort: String) {
+        searchQuery.sort = sort
+        loadOffers()
+    }
+
+    fun updateFilter(filter: String) {
+        searchQuery.filter = filter
+        loadOffers()
+    }
+
+    fun searchOffersByQuery(query: String) {
+        loadOffers()
+    }
+
     private val _loginState = MutableStateFlow<ApiResponse<CustomerSignUp>>(ApiResponse.Loading)
     val loginState: StateFlow<ApiResponse<CustomerSignUp>> =_loginState
 
@@ -197,6 +215,22 @@ class AppViewModel @Inject constructor(
                 sourceCall = { login(phone, password) }
             )
         }
+    }
+
+    private val _offerTags = MutableStateFlow<ApiResponse<OfferTags>>(ApiResponse.Loading)
+
+    private fun loadOfferTags() {
+        viewModelScope.launch {
+            emitApiResponse(
+                flow = _offerTags,
+                sourceCall = { getOfferTags() }
+            )
+        }
+    }
+
+    fun getFilterOptions(): List<String> {
+        val currentTags = (_offerTags.value as? ApiResponse.Success)?.data?.tagTypes.orEmpty()
+        return currentTags
     }
 
     private fun loadMockOffers() {

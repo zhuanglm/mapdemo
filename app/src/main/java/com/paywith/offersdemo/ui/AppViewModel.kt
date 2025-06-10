@@ -201,7 +201,7 @@ class AppViewModel @Inject constructor(
     }
 
     fun searchOffersByQuery(query: String) {
-        loadOffers()
+        loadOffers(query)
     }
 
     private val _loginState = MutableStateFlow<ApiResponse<CustomerSignUp>>(ApiResponse.Loading)

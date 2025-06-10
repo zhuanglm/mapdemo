@@ -2,9 +2,16 @@ package com.paywith.offersdemo.ui.offers
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -15,25 +22,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
-import coil3.compose.rememberAsyncImagePainter
-import coil3.request.ImageRequest
-import coil3.request.crossfade
-import coil3.request.transformations
-import coil3.size.Size
-import coil3.transform.CircleCropTransformation
-import com.paywith.offersdemo.ui.model.OfferUiModel
+import coil3.compose.AsyncImage
 import com.paywith.offersdemo.R
+import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.ui.theme.ColorSearchHint
 
 @Composable
@@ -42,117 +40,87 @@ fun OfferItem(
     obs: OfferUiModel,
     onClick: () -> Unit
 ) {
-
     val marginFive = dimensionResource(id = R.dimen.margin_five)
     val marginTen = dimensionResource(id = R.dimen.margin_ten)
     val marginFifteen = dimensionResource(id = R.dimen.margin_fifteen)
     val marginTwenty = dimensionResource(id = R.dimen.margin_twenty)
     val pointsBackgroundPainter = painterResource(id = R.drawable.rect_rounded_blue_pale)
 
-    ConstraintLayout(
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .background(Color.White)
             .clickable { onClick() }
-            .padding(vertical = 15.dp)
     ) {
-        val (profileImage, merchantName, merchantDesc, pointsFrame, divider) = createRefs()
-
-        val painter = rememberAsyncImagePainter(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(obs.merchantLogoUrl)
-                .crossfade(true)
-                .size(Size.ORIGINAL)
-                .transformations(CircleCropTransformation())
-                .build()
-        )
-
-        Image(
-            painter = painter,
-            contentDescription = null,
+        Row(
             modifier = Modifier
-                .size(dimensionResource(id = R.dimen.merchant_profile_size))
-                .clip(CircleShape)
-                .border(2.dp, Color.Transparent, CircleShape)
-                .constrainAs(profileImage) {
-                    start.linkTo(parent.start, marginFifteen)
-                    top.linkTo(parent.top)
-                    bottom.linkTo(parent.bottom)
-                },
-            contentScale = ContentScale.Crop
-        )
-
-        Text(
-            text = obs.merchantName,
-            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.constrainAs(merchantName) {
-                start.linkTo(profileImage.end, marginTen)
-                end.linkTo(pointsFrame.start, marginTen)
-                top.linkTo(profileImage.top)
-                bottom.linkTo(profileImage.bottom)
-                verticalBias = 0.32f
-                width = Dimension.fillToConstraints
-            }
-        )
-
-        Text(
-            text = obs.distance + " \u2022 " + obs.shortMerchantAddress,
-            style = MaterialTheme.typography.bodySmall.copy(
-                fontSize = 11.sp,
-                color = ColorSearchHint
-            ),
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.constrainAs(merchantDesc) {
-                start.linkTo(profileImage.end, marginTen)
-                end.linkTo(pointsFrame.start, marginTen)
-                top.linkTo(merchantName.bottom, marginFive)
-                width = Dimension.fillToConstraints
-            }
-        )
-
-        Box(
-            modifier = Modifier
-                .constrainAs(pointsFrame) {
-                    end.linkTo(parent.end, marginTwenty)
-                    top.linkTo(profileImage.top)
-                    bottom.linkTo(profileImage.bottom)
-                }
+                .fillMaxWidth()
+                .padding(vertical = 15.dp)
+                .padding(start = marginFifteen, end = marginTwenty),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = pointsBackgroundPainter ,
-                contentDescription = stringResource(R.string.points),
+            AsyncImage(
+                model = obs.merchantLogoUrl,
+                contentDescription = obs.merchantName,
+                placeholder = painterResource(id = R.drawable.ic_shoppingbag),
+                error = painterResource(id = R.drawable.shoppingbag),
                 modifier = Modifier
-                    .matchParentSize()
-                ,
-                contentScale = ContentScale.FillBounds
+                    .size(dimensionResource(id = R.dimen.merchant_profile_size))
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
             )
 
-            Text(
-                text = obs.pointsText,
-                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                color = colorResource(id = R.color.colorPointsBlue),
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .defaultMinSize(minWidth = 80.dp)
-                    .wrapContentWidth(Alignment.CenterHorizontally)
+            Spacer(modifier = Modifier.width(marginTen))
 
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-                ,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = obs.merchantName,
+                    style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                Spacer(modifier = Modifier.height(marginFive))
+
+                Text(
+                    text = "${obs.distance} \u2022 ${obs.shortMerchantAddress}",
+                    style = MaterialTheme.typography.bodySmall.copy(
+                        fontSize = 11.sp,
+                        color = ColorSearchHint
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+
+            Spacer(modifier = Modifier.width(marginTen))
+
+            Box(
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    painter = pointsBackgroundPainter,
+                    contentDescription = null,
+                    modifier = Modifier.matchParentSize(),
+                    contentScale = ContentScale.FillBounds
+                )
+                Text(
+                    text = obs.pointsText,
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = colorResource(id = R.color.colorPointsBlue),
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    maxLines = 1
+                )
+            }
         }
 
         HorizontalDivider(
-            modifier = Modifier.constrainAs(divider) {
-                start.linkTo(merchantDesc.start)
-                end.linkTo(parent.end, margin = marginTwenty)
-                bottom.linkTo(parent.bottom)
-                width = Dimension.fillToConstraints
-            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = marginFifteen + dimensionResource(id = R.dimen.merchant_profile_size) + marginTen, end = marginTwenty),
             thickness = 1.dp,
             color = colorResource(id = R.color.colorDivider)
         )

@@ -18,6 +18,8 @@ data class OfferUiModel(
     val facebookPageLink: String? = null,
     val instagramPageLink: String? = null,
     val twitterPageLink: String? = null,
-    val merchantLocation: Location? = null
+    val merchantLocation: Location? = null,
+    val offerType: Int,
+    val tagType: String
 )
 

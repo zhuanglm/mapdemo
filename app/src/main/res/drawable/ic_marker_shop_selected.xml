@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Outer map marker shape -->
+    <path
+        android:fillColor="#165CA8"
+        android:pathData="M24,0C12,0 2,10 2,22c0,10.5 11,20 22,26 11,-6 22,-15.5 22,-26C46,10 36,0 24,0z" />
+
+    <!-- Inner white circle-->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M24,6a16,16 0 1,0 0,32a16,16 0 1,0 0,-32z" />
+
+    <!-- Light blue shopping bag -->
+    <group
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:translateX="6.8"
+        android:translateY="4">
+
+        <!-- Bag body -->
+        <path
+            android:fillColor="#64B5F6"
+            android:pathData="M5,9h12c0.55,0 1,0.45 1,1v8c0,0.55 -0.45,1 -1,1H6c-0.55,0 -1,-0.45 -1,-1v-8c0,-0.55 0.45,-1 1,-1z" />
+
+        <!-- Handle -->
+        <path
+            android:fillColor="#64B5F6"
+            android:pathData="M9,9V7.5c0,-1.38 1.12,-2.5 2.5,-2.5S14,6.12 14,7.5V9h-1.5V7.5c0,-0.55 -0.45,-1 -1,-1s-1,0.45 -1,1V9H9z" />
+    </group>
+</vector>

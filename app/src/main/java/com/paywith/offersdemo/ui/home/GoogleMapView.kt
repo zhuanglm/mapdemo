@@ -27,6 +27,7 @@ import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.paywith.offersdemo.ui.getOfferMarkerIcon
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import kotlinx.coroutines.launch
 
@@ -35,6 +36,7 @@ fun GoogleMapView(
     offers: List<OfferUiModel>,
     cameraPositionState: CameraPositionState,
     isProgrammaticAnimationInProgress: MutableState<Boolean>,
+    selectedOffer: OfferUiModel?,
     onMarkerClick: (OfferUiModel) -> Unit
 ) {
     // move to first offer
@@ -59,7 +61,6 @@ fun GoogleMapView(
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState
-
     ) {
         offers.forEach { offer ->
 
@@ -67,12 +68,19 @@ fun GoogleMapView(
             if (loc != null) {
                 val currentLatLng = LatLng(loc.latitude, loc.longitude)
 
+                val isSelected = offer.offerId == selectedOffer?.offerId
+
+                val icon = getOfferMarkerIcon(offer, isSelected)
+
                 Marker(
                     state = MarkerState(
                         position = currentLatLng
                     ),
                     title = offer.merchantName,
                     snippet = offer.merchantAddress,
+                    icon = icon,
+                    // lower Z-index to avoid overlapping with other markers
+                    zIndex = if (isSelected) 1f else 0f,
                     onClick = {
                         onMarkerClick(offer)
 

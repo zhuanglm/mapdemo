@@ -169,6 +169,7 @@ fun MapScreen(
                         offers = offers,
                         cameraPositionState = cameraPositionState,
                         isProgrammaticAnimationInProgress = isProgrammaticAnimationInProgress,
+                        selectedOffer = selectedOffer.value,
                         onMarkerClick = { offer ->
                             selectedOffer.value = offer
                             coroutineScope.launch {

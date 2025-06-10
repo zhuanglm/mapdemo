@@ -300,7 +300,7 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun Offer.toOfferUiModel(userLocation: Coords?): OfferUiModel {
+    private fun Offer.toOfferUiModel(userLocation: Coords?): OfferUiModel {
         val pointsText = if (this.isAcquisition) {
             if (getValue(this.acquisitionAmount) > 1) {
                 "${getValue(this.acquisitionAmount)} pts"
@@ -330,6 +330,8 @@ class AppViewModel @Inject constructor(
             merchantAddress = merchantAddress,
             pointsText = pointsText,
             offerId = this.id?.toString() ?: UUID.randomUUID().toString(),
+            offerType = this.offerType,
+            tagType = this.tagType ?: "",
             merchantLogoUrl = this.getLogo(),
             shortMerchantAddress = shortMerchantAddress,
             distance = distangce,

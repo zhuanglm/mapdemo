@@ -94,19 +94,23 @@ fun OffersScreenContentPreview() {
             offerId = "101",
             merchantLogoUrl = "https://via.placeholder.com/150.png?text=Mock+Logo+A",
             merchantName = "Mock Store A",
+            distance = "1.2 km",
             shortMerchantAddress = "",
             merchantAddress = "123 Mock St",
             pointsText = "500 pts",
-            distance = "1.2 km"
+            offerType = 0,
+            tagType = ""
         ),
         OfferUiModel(
             offerId = "102",
             merchantLogoUrl = "https://via.placeholder.com/150.png?text=Mock+Logo+A",
             merchantName = "Mock Store B",
+            distance = "100.2 mi",
             shortMerchantAddress = "",
             merchantAddress = "456 Mock St",
             pointsText = "50 pts",
-            distance = "100.2 mi"
+            offerType = 0,
+            tagType = ""
         )
     )
     OffersScreenContent(Modifier,testOffers) {}

@@ -2,7 +2,6 @@ package com.paywith.offersdemo.domain.model
 
 import android.icu.text.DecimalFormat
 import android.location.Location
-import androidx.annotation.IntDef
 
 data class Offer(
     val id: Int? = null,
@@ -82,15 +81,15 @@ data class Offer(
     }
 
     /**
-     * Returns the distance in miles, truncated to one decimal point, between this offer and the given coords
+     * Returns the distance in miles, truncated to one decimal point, between this offer and the given coordinates.
      */
-    fun getDistanceInMiles(coords: Coords): String {
-        return if (coords.latitude == SearchQuery.DEFAULT_LAT && coords.longitude == SearchQuery.DEFAULT_LNG) {
+    fun getDistanceInMiles(coordinates: Coords): String {
+        return if (coordinates.latitude == SearchQuery.DEFAULT_LAT && coordinates.longitude == SearchQuery.DEFAULT_LNG) {
             "Distance Unknown"
         } else {
-            val offerLocation = getLocationFromMerchantLocation(coordinates.toString())
-            val offerCoords = Coords.fromLocation(offerLocation)
-            val dist = coords.getDistance(offerCoords, Coords.DistanceType.MILES)
+            val offerLocation = getLocationFromMerchantLocation(this.coordinates.toString())
+            val offerCoordinates = Coords.fromLocation(offerLocation)
+            val dist = coordinates.getDistance(offerCoordinates, Coords.DistanceType.MILES)
             val format = DecimalFormat("#,###.#")
             return format.format(dist) + " mi."
         }
@@ -118,10 +117,6 @@ data class Offer(
         const val DATA_ERROR = -1
         const val ACQUISITION_OFFER = 0
         const val LOYALTY_OFFER = 1
-
-        @Retention(AnnotationRetention.SOURCE)
-        @IntDef(DATA_ERROR, ACQUISITION_OFFER, LOYALTY_OFFER)
-        annotation class OfferType
 
         fun getLocationFromMerchantLocation(merchantCoordinates: String): Location {
             val location = Location("merchant")

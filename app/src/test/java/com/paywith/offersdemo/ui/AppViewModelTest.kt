@@ -5,6 +5,7 @@ import app.cash.turbine.test
 import com.paywith.offersdemo.data.model.ApiResponse
 import com.paywith.offersdemo.domain.model.Offer
 import com.paywith.offersdemo.domain.repository.LocationRepository
+import com.paywith.offersdemo.domain.usecase.FilterOffersUseCase
 import com.paywith.offersdemo.domain.usecase.GetOfferTagsUseCase
 import com.paywith.offersdemo.domain.usecase.GetOffersUseCase
 import com.paywith.offersdemo.ui.viewmodel.AppViewModel
@@ -37,6 +38,7 @@ class AppViewModelTest {
     private lateinit var getOffers: GetOffersUseCase
     private lateinit var getOfferTags: GetOfferTagsUseCase
     private lateinit var locationRepository: LocationRepository
+    private lateinit var filterOffersUseCase: FilterOffersUseCase
 
     // Mock data used across tests
     private val mockLocation: Location = mockk()
@@ -46,6 +48,7 @@ class AppViewModelTest {
         getOffers = mockk()
         getOfferTags = mockk(relaxed = true)
         locationRepository = mockk()
+        filterOffersUseCase = mockk()
 
         // Now, define the behavior of your mockLocation
         every { mockLocation.latitude } returns 40.7128
@@ -57,7 +60,8 @@ class AppViewModelTest {
         viewModel = AppViewModel(
             getOffers = getOffers,
             getOfferTags = getOfferTags,
-            location = locationRepository
+            location = locationRepository,
+            filterOffersUseCase = filterOffersUseCase
         )
     }
 

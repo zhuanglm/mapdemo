@@ -14,6 +14,7 @@ import com.paywith.offersdemo.domain.model.SearchQuery
 import com.paywith.offersdemo.domain.model.SearchQuery.Companion.DEFAULT_LAT
 import com.paywith.offersdemo.domain.model.SearchQuery.Companion.DEFAULT_LNG
 import com.paywith.offersdemo.domain.repository.LocationRepository
+import com.paywith.offersdemo.domain.usecase.FilterOffersUseCase
 import com.paywith.offersdemo.domain.usecase.GetOfferTagsUseCase
 import com.paywith.offersdemo.domain.usecase.GetOffersUseCase
 import com.paywith.offersdemo.ui.model.OfferUiModel
@@ -33,6 +34,7 @@ import kotlin.math.roundToInt
 class AppViewModel @Inject constructor(
     private val getOffers: GetOffersUseCase,
     private val getOfferTags: GetOfferTagsUseCase,
+    private val filterOffersUseCase: FilterOffersUseCase,
     private val location: LocationRepository
 ) : BaseViewModel() {
 
@@ -88,6 +90,7 @@ class AppViewModel @Inject constructor(
 
     private val _offers = MutableStateFlow<ApiResponse<List<OfferUiModel>>>(ApiResponse.Loading)
     val offers: StateFlow<ApiResponse<List<OfferUiModel>>> = _offers
+    private var allOffers = listOf<Offer>()
 
     fun loadOffers(query: String? = null) {
         viewModelScope.launch {
@@ -104,6 +107,7 @@ class AppViewModel @Inject constructor(
                 flow = _offers,
                 sourceCall = { getOffers(search) },
                 mapper = { offers ->
+                    allOffers = offers
                     offers.map { it.toOfferUiModel(userCoordinates) }
                 }
             )
@@ -126,8 +130,9 @@ class AppViewModel @Inject constructor(
     }
 
     fun updateFilter(filter: String) {
-        searchQuery = searchQuery.copy(filter = filter)
-        loadOffers()
+        val filteredOffers = filterOffersUseCase(allOffers, filter)
+            .map { it.toOfferUiModel(null) }
+        _offers.value = ApiResponse.Success(filteredOffers)
     }
 
     fun searchOffersByQuery(query: String) {

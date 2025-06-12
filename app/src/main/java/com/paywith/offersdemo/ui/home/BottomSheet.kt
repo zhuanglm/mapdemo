@@ -40,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.paywith.offersdemo.R
+import com.paywith.offersdemo.domain.model.SearchModifier.Filter.Companion.DEFAULT_FILTER_QUERY
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.ui.model.SortOption
 import com.paywith.offersdemo.ui.offers.OffersScreenContent
@@ -60,7 +61,7 @@ fun BottomSheet(
     onFilterClick: (String) -> Unit = {},
     onItemClick: (String) -> Unit
 ) {
-    val allText = stringResource(R.string.all)
+    val allText = DEFAULT_FILTER_QUERY
     val fullFilterOptions = remember(filterOptions) {
         listOf(allText) + filterOptions
     }

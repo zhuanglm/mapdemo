@@ -54,6 +54,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.paywith.offersdemo.R
+import com.paywith.offersdemo.domain.model.SearchModifier.Filter.Companion.DEFAULT_FILTER_QUERY
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.ui.offers.OfferItem
 
@@ -137,12 +138,12 @@ fun SearchButtonsRowPreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun FielterButtonsRowPreview() {
+fun FilterButtonsRowPreview() {
     ButtonsRow(
         leftIcon = ImageVector.vectorResource(R.drawable.ic_sort),
         rightIcon = ImageVector.vectorResource(R.drawable.ic_filter_eat),
         leftButtonText = stringResource(R.string.closest),
-        rightButtonText = stringResource(R.string.all),
+        rightButtonText = DEFAULT_FILTER_QUERY,
         roundedCorner = 30.dp
     )
 }

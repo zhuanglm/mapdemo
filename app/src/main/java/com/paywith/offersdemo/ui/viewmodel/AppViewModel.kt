@@ -10,6 +10,7 @@ import com.paywith.offersdemo.data.model.OfferTags
 import com.paywith.offersdemo.domain.model.Coords
 import com.paywith.offersdemo.domain.model.Offer
 import com.paywith.offersdemo.domain.model.SearchModifier
+import com.paywith.offersdemo.domain.model.SearchModifier.Filter.Companion.DEFAULT_FILTER_QUERY
 import com.paywith.offersdemo.domain.model.SearchQuery
 import com.paywith.offersdemo.domain.model.SearchQuery.Companion.DEFAULT_LAT
 import com.paywith.offersdemo.domain.model.SearchQuery.Companion.DEFAULT_LNG
@@ -30,6 +31,26 @@ import java.util.UUID
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
+/**
+ * ViewModel for the main application screen, responsible for fetching and managing offer data,
+ * handling user location, and providing data to the UI.
+ *
+ * This ViewModel uses Hilt for dependency injection to get instances of use cases and repositories.
+ * It exposes data through [StateFlow] and [State] objects to be observed by the UI.
+ *
+ * Key responsibilities:
+ * - Fetching the user's current location.
+ * - Loading offers based on the user's location and search queries.
+ * - Loading offer tags for filtering.
+ * - Handling search and filtering of offers.
+ * - Providing offer details to the UI.
+ * - Managing the state of API responses (Loading, Success, Error).
+ *
+ * @property getOffers Use case for fetching offers from the repository.
+ * @property getOfferTags Use case for fetching offer tags.
+ * @property filterOffersUseCase Use case for filtering offers based on criteria.
+ * @property location Repository for accessing location data.
+ */
 @HiltViewModel
 class AppViewModel @Inject constructor(
     private val getOffers: GetOffersUseCase,
@@ -38,7 +59,6 @@ class AppViewModel @Inject constructor(
     private val location: LocationRepository
 ) : BaseViewModel() {
 
-    private val DEFAULT_FILTER_QUERY: String = "All"
     private var searchQuery = SearchQuery(DEFAULT_FILTER_QUERY, SearchModifier.Sort.DEFAULT_SORT_QUERY)
 
     private val _location = MutableStateFlow<Location?>(null)

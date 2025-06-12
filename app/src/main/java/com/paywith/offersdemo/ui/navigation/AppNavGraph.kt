@@ -7,23 +7,25 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.paywith.offersdemo.ui.AppViewModel
+import com.paywith.offersdemo.ui.viewmodel.AppViewModel
 import com.paywith.offersdemo.ui.home.MapScreen
 import com.paywith.offersdemo.ui.login.LoginScreen
 import com.paywith.offersdemo.ui.home.MerchantScreen
 import com.paywith.offersdemo.ui.offers.OffersScreen
 import com.paywith.offersdemo.ui.search.SearchMerchantScreen
 import com.paywith.offersdemo.ui.search.SearchRegionScreen
+import com.paywith.offersdemo.ui.viewmodel.LoginViewModel
 
 @Composable
 fun AppNavGraph(navController: NavHostController, snackbarHostState: SnackbarHostState,
-                appViewModel: AppViewModel) {
+                appViewModel: AppViewModel, loginViewModel: LoginViewModel
+) {
     NavHost(
         navController = navController,
         startDestination = NavRoute.Login.route
     ) {
         composable(NavRoute.Login.route) {
-            LoginScreen(appViewModel,
+            LoginScreen(loginViewModel,
                 snackbarHostState,
                 onLoginSuccess = {
                 navController.navigateAndClearStack(NavRoute.Home.route)

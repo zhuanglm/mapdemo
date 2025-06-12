@@ -40,16 +40,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.paywith.offersdemo.R
 import com.paywith.offersdemo.data.model.ApiResponse
-import com.paywith.offersdemo.ui.AppViewModel
+import com.paywith.offersdemo.ui.viewmodel.LoginViewModel
 
 @Composable
 fun LoginScreen(
-    appViewModel: AppViewModel, snackbarHostState: SnackbarHostState,
+    viewModel: LoginViewModel, snackbarHostState: SnackbarHostState,
     onLoginSuccess: () -> Unit
 ) {
     var phone by remember { mutableStateOf("12565768172") }
     var password by remember { mutableStateOf("Testing1!") }
-    val loginState by appViewModel.loginState.collectAsState()
+    val loginState by viewModel.loginState.collectAsState()
 
     LaunchedEffect(loginState) {
         if (loginState is ApiResponse.Success) {
@@ -68,7 +68,7 @@ fun LoginScreen(
                 onPhoneChange = { phone = it },
                 onPasswordChange = { password = it },
                 onLoginClick = {
-                    appViewModel.userLogin(phone, password)
+                    viewModel.userLogin(phone, password)
                 }
             )
         }

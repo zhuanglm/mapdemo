@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.paywith.offersdemo.R
 import com.paywith.offersdemo.ui.AppStandardScreen
-import com.paywith.offersdemo.ui.AppViewModel
+import com.paywith.offersdemo.ui.viewmodel.AppViewModel
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import kotlinx.coroutines.launch
 

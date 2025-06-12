@@ -1,25 +1,54 @@
 package com.paywith.offersdemo.domain.usecase
 
+import com.paywith.offersdemo.data.model.ApiResponse
+import com.paywith.offersdemo.domain.model.SearchQuery
+import com.paywith.offersdemo.domain.model.Offer
+import com.paywith.offersdemo.domain.repository.OffersRepository
+import io.mockk.coEvery
+import io.mockk.mockk
+import junit.framework.TestCase.assertEquals
+import junit.framework.TestCase.assertTrue
+import kotlinx.coroutines.test.runTest
 import org.junit.Test
 
 class GetOffersUseCaseTest {
+    private val repository = mockk<OffersRepository>()
+    private val useCase = GetOffersUseCase(repository)
 
     @Test
-    fun `invoke returns empty list when repository provides no offers`() {
-        // Verify that GetOffersUseCase returns an empty list when the OffersRepository.getOffers() method returns an empty list.
-        // TODO implement test
+    fun `invoke returns empty list when repository provides no offers`(): Unit = runTest {
+        coEvery { repository.getOffersByQuery(any()) } returns ApiResponse.Success(emptyList())
+
+        val result = useCase(SearchQuery("test"))
+
+        assertTrue(result is ApiResponse.Success)
+        assertTrue((result as ApiResponse.Success).data.isEmpty())
     }
 
     @Test
-    fun `invoke returns list of offers when repository provides offers`() {
-        // Verify that GetOffersUseCase returns a list containing the expected Offer objects when OffersRepository.getOffers() returns a list of offers.
-        // TODO implement test
+    fun `invoke returns list of offers when repository provides offers`() = runTest {
+        val offers = listOf(Offer(
+            id = 1,
+            merchantId = 1,
+            businessName = "Test Merchant",
+            tagType = "Test Tag",
+        )) // mock some offer
+        coEvery { repository.getOffersByQuery(any()) } returns ApiResponse.Success(offers)
+
+        val result = useCase(SearchQuery("test"))
+
+        assertTrue(result is ApiResponse.Success)
+        assertEquals(offers, (result as ApiResponse.Success).data)
     }
 
     @Test
-    fun `invoke propagates exception when repository throws an exception`() {
-        // Verify that GetOffersUseCase correctly propagates any exceptions (e.g., IOException, custom domain exceptions) thrown by OffersRepository.getOffers().
-        // TODO implement test
+    fun `invoke propagates exception when repository throws an exception`() = runTest {
+        coEvery { repository.getOffersByQuery(any()) } returns ApiResponse.Failure("network error")
+
+        val result = useCase(SearchQuery("test"))
+
+        assertTrue(result is ApiResponse.Failure)
+        assertEquals("network error", (result as ApiResponse.Failure).message)
     }
 
     @Test

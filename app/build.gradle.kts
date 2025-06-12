@@ -64,6 +64,17 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.navigation.runtime.android)
     testImplementation(libs.junit)
+
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
+
+// MockK for mocking classes and methods
+    testImplementation(libs.mockk)
+
+// (Optional) Turbine for Flow testing
+    testImplementation(libs.turbine)
+
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

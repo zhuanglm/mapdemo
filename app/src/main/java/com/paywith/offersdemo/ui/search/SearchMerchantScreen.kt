@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import com.paywith.offersdemo.R
 import com.paywith.offersdemo.data.model.ApiResponse
 import com.paywith.offersdemo.ui.AppStandardScreen
-import com.paywith.offersdemo.ui.AppViewModel
+import com.paywith.offersdemo.ui.viewmodel.AppViewModel
 import com.paywith.offersdemo.ui.offers.OffersScreenContent
 import com.paywith.offersdemo.ui.theme.ColorSearchHint
 import com.paywith.offersdemo.ui.theme.LightBlue

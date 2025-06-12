@@ -24,7 +24,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.paywith.offersdemo.R
 import com.paywith.offersdemo.data.model.ApiResponse
 import com.paywith.offersdemo.ui.AppStandardScreen
-import com.paywith.offersdemo.ui.AppViewModel
+import com.paywith.offersdemo.ui.viewmodel.AppViewModel
 import com.paywith.offersdemo.ui.model.OfferUiModel
 
 

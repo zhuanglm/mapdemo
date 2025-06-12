@@ -55,7 +55,7 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.paywith.offersdemo.R
 import com.paywith.offersdemo.data.model.ApiResponse
 import com.paywith.offersdemo.ui.AppStandardScreen
-import com.paywith.offersdemo.ui.AppViewModel
+import com.paywith.offersdemo.ui.viewmodel.AppViewModel
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.ui.offers.LocationPermissionHandler
 import kotlinx.coroutines.flow.collectLatest

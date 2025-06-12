@@ -26,6 +26,7 @@ import com.paywith.offersdemo.data.model.ApiResponse
 import com.paywith.offersdemo.ui.AppStandardScreen
 import com.paywith.offersdemo.ui.viewmodel.AppViewModel
 import com.paywith.offersdemo.ui.model.OfferUiModel
+import com.paywith.offersdemo.ui.model.PointsType
 
 
 @Composable
@@ -97,7 +98,8 @@ fun OffersScreenContentPreview() {
             distance = "1.2 km",
             shortMerchantAddress = "",
             merchantAddress = "123 Mock St",
-            pointsText = "500 pts",
+            pointsAmount = 500,
+            pointsType = PointsType.LOYALTY,
             offerType = 0,
             tagType = ""
         ),
@@ -108,7 +110,8 @@ fun OffersScreenContentPreview() {
             distance = "100.2 mi",
             shortMerchantAddress = "",
             merchantAddress = "456 Mock St",
-            pointsText = "50 pts",
+            pointsAmount = 500,
+            pointsType = PointsType.ACQUISITION,
             offerType = 0,
             tagType = ""
         )

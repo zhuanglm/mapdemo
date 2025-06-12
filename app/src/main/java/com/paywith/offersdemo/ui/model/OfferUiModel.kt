@@ -9,7 +9,8 @@ data class OfferUiModel(
     val distance: String,
     val shortMerchantAddress: String,
     val merchantAddress: String,
-    val pointsText: String,
+    val pointsAmount: Int,
+    val pointsType: PointsType,
     val offerDetail: String? = null,
     val merchantDescription: String? = null,
     val merchantPhoneNumber: String? = null,
@@ -23,3 +24,8 @@ data class OfferUiModel(
     val tagType: String
 )
 
+enum class PointsType {
+    ACQUISITION,
+    LOYALTY,
+    NONE
+}

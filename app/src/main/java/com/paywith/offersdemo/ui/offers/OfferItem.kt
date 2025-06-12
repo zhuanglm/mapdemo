@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.paywith.offersdemo.R
+import com.paywith.offersdemo.ui.getPointsText
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.ui.theme.ColorSearchHint
 
@@ -107,7 +108,7 @@ fun OfferItem(
                     contentScale = ContentScale.FillBounds
                 )
                 Text(
-                    text = obs.pointsText,
+                    text = getPointsText(obs),
                     style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
                     color = colorResource(id = R.color.colorPointsBlue),
                     modifier = Modifier

@@ -19,6 +19,7 @@ import com.paywith.offersdemo.domain.usecase.FilterOffersUseCase
 import com.paywith.offersdemo.domain.usecase.GetOfferTagsUseCase
 import com.paywith.offersdemo.domain.usecase.GetOffersUseCase
 import com.paywith.offersdemo.ui.model.OfferUiModel
+import com.paywith.offersdemo.ui.model.PointsType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -70,7 +71,6 @@ class AppViewModel @Inject constructor(
             .distinctUntilChanged()
             .onEach {
                 Log.d("AppViewModel", "Location available, triggering offers load.")
-                //loadMockOffers()
                 loadOffers()
                 loadOfferTags()
             }
@@ -184,20 +184,10 @@ class AppViewModel @Inject constructor(
     }
 
     private fun Offer.toOfferUiModel(userLocation: Coords?): OfferUiModel {
-        val pointsText = if (this.isAcquisition) {
-            if (getValue(this.acquisitionAmount) > 1) {
-                "${getValue(this.acquisitionAmount)} pts"
-            } else {
-                "${getValue(this.acquisitionAmount)} pt"
-            }
-        } else if (this.isLoyalty) {
-            if (getValue(this.loyaltyAmount) > 1) {
-                "${getValue(this.loyaltyAmount)}x pts"
-            } else {
-                "${getValue(this.loyaltyAmount)}x pt"
-            }
-        } else {
-            "0 pts"
+        val (amount, type) = when {
+            isAcquisition -> getValue(acquisitionAmount) to PointsType.ACQUISITION
+            isLoyalty -> getValue(loyaltyAmount) to PointsType.LOYALTY
+            else -> 0 to PointsType.NONE
         }
 
         val distance = if (userLocation != null) {
@@ -211,7 +201,8 @@ class AppViewModel @Inject constructor(
         return OfferUiModel(
             merchantName = this.locationName ?: "",
             merchantAddress = merchantAddress,
-            pointsText = pointsText,
+            pointsAmount = amount,
+            pointsType = type,
             offerId = this.id?.toString() ?: UUID.randomUUID().toString(),
             offerType = this.offerType,
             tagType = this.tagType ?: "",

@@ -36,4 +36,15 @@
     <string name="neighborhood_city_zip_code">Neighborhood, city, zip code</string>
     <string name="current_location">Current Location</string>
     <string name="suggested_location">SUGGESTED LOCATIONS</string>
+    <plurals name="points">
+        <item quantity="one">%d pt</item>
+        <item quantity="other">%d pts</item>
+    </plurals>
+
+    <plurals name="loyalty_points">
+        <item quantity="one">%dx pt</item>
+        <item quantity="other">%dx pts</item>
+    </plurals>
+    <string name="zero_points">0 pts</string>
+
 </resources>

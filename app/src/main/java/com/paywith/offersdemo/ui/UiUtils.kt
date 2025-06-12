@@ -5,12 +5,16 @@ import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.paywith.offersdemo.R
 import com.paywith.offersdemo.ui.model.OfferUiModel
+import com.paywith.offersdemo.ui.model.PointsType
+
 
 /**
  * Project: Offers Demo
@@ -62,3 +66,16 @@ fun getOfferMarkerIcon(offer: OfferUiModel, isSelected: Boolean): BitmapDescript
 
     return rememberMarkerIconFromVector(resId)
 }
+
+@Composable
+fun getPointsText(offer: OfferUiModel): String {
+    return when (offer.pointsType) {
+        PointsType.ACQUISITION ->
+            pluralStringResource(R.plurals.points, offer.pointsAmount, offer.pointsAmount)
+        PointsType.LOYALTY ->
+            pluralStringResource(R.plurals.loyalty_points, offer.pointsAmount, offer.pointsAmount)
+        PointsType.NONE ->
+            stringResource(R.string.zero_points)
+    }
+}
+

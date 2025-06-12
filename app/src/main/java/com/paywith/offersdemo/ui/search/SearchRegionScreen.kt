@@ -89,7 +89,7 @@ fun SearchRegionContent(
 ) {
     Column(
         modifier = modifier
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
             .padding(horizontal = 30.dp, vertical = 20.dp)
     ) {
 

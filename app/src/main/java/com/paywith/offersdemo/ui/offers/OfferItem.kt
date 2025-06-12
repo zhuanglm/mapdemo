@@ -49,7 +49,7 @@ fun OfferItem(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
             .clickable { onClick() }
     ) {
         Row(
@@ -122,7 +122,7 @@ fun OfferItem(
                 .fillMaxWidth()
                 .padding(start = marginFifteen + dimensionResource(id = R.dimen.merchant_profile_size) + marginTen, end = marginTwenty),
             thickness = 1.dp,
-            color = colorResource(id = R.color.colorDivider)
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
         )
     }
 }

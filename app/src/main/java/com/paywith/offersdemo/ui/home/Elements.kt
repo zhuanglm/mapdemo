@@ -185,7 +185,7 @@ fun SelectableOptionGroup(
         }
 
         Spacer(modifier = Modifier.height(8.dp))
-        HorizontalDivider()
+        HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f))
     }
 }
 

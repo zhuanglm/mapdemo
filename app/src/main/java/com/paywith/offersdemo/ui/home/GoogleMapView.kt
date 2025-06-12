@@ -15,22 +15,33 @@ package com.paywith.offersdemo.ui.home
  * All rights reserved © paywith.com.
  */
 
+import android.content.res.Configuration
+import android.content.res.Resources
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.maps.android.compose.CameraPositionState
 import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapEffect
+import com.google.maps.android.compose.MapsComposeExperimentalApi
 import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
+import com.paywith.offersdemo.R
 import com.paywith.offersdemo.ui.getOfferMarkerIcon
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import kotlinx.coroutines.launch
 
+
+@OptIn(MapsComposeExperimentalApi::class)
 @Composable
 fun GoogleMapView(
     offers: List<OfferUiModel>,
@@ -57,11 +68,33 @@ fun GoogleMapView(
     }
 
     val coroutineScope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val configuration = LocalConfiguration.current
+    val nightModeFlags = configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+    val styleResId = when (nightModeFlags) {
+        Configuration.UI_MODE_NIGHT_YES -> R.raw.mapstyle_night
+        else -> R.raw.mapstyle_day
+    }
 
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState
     ) {
+        MapEffect { map ->
+            val styleOptions = try {
+                MapStyleOptions.loadRawResourceStyle(context, styleResId)
+            } catch (e: Resources.NotFoundException) {
+                Log.e("MapStyle", "Can't find style. Error: ", e)
+                null
+            }
+            styleOptions?.let {
+                val success = map.setMapStyle(it)
+                if (!success) {
+                    Log.e("MapStyle", "Style parsing failed.")
+                }
+            }
+        }
+
         offers.forEach { offer ->
 
             val loc = offer.merchantLocation

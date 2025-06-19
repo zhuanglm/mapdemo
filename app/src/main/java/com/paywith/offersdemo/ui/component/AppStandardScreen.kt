@@ -1,4 +1,4 @@
-package com.paywith.offersdemo.ui
+package com.paywith.offersdemo.ui.component
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.icons.Icons

@@ -1,4 +1,4 @@
-package com.paywith.offersdemo.ui.home
+package com.paywith.offersdemo.ui.screen.home
 
 import android.content.Context
 import android.content.Intent

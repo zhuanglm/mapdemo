@@ -1,6 +1,7 @@
-package com.paywith.offersdemo.ui.search
+package com.paywith.offersdemo.ui.screen.search
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,7 +37,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.paywith.offersdemo.R
-import com.paywith.offersdemo.ui.AppStandardScreen
+import com.paywith.offersdemo.data.model.SearchRegion
+import com.paywith.offersdemo.ui.component.AppStandardScreen
 import com.paywith.offersdemo.ui.viewmodel.AppViewModel
 import com.paywith.offersdemo.ui.theme.ColorSearchHint
 import com.paywith.offersdemo.ui.theme.LightBlue
@@ -45,7 +47,8 @@ import com.paywith.offersdemo.ui.theme.LightGrey
 @Composable
 fun SearchRegionScreen(
     appViewModel: AppViewModel,
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onLocationSelected: (String) -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     var searchQuery by remember { mutableStateOf("") }
@@ -67,14 +70,18 @@ fun SearchRegionScreen(
                 onQueryChange = {
                     searchQuery = it
                     appViewModel.onSearchRegionChange(it)
-                },
+                }
             )
 
             LocationsList(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                locations = locations
+                locations = locations,
+                onLocationClick = {
+                    searchQuery = it.description
+                    onLocationSelected(it.placeId)
+                }
             )
         }
     }
@@ -163,7 +170,8 @@ fun SearchRegionContent(
 @Composable
 fun LocationsList(
     modifier: Modifier = Modifier,
-    locations: List<String>
+    locations: List<SearchRegion>,
+    onLocationClick: (SearchRegion) -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier
@@ -173,12 +181,13 @@ fun LocationsList(
     ) {
         items(locations) { location ->
             Text(
-                text = location,
-                color = Color.Black,
+                text = location.description,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 16.sp,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(12.dp)
+                    .clickable { onLocationClick(location) }
             )
         }
     }
@@ -199,10 +208,10 @@ fun PreviewSearchRegionContent() {
 fun PreviewLocationsList() {
     LocationsList(
         locations = listOf(
-            "San Francisco, CA",
-            "New York, NY",
-            "Los Angeles, CA",
-            "Chicago, IL"
+            SearchRegion("San Francisco, CA", "ChIJIQBpAG2ahYAR_6128GcTUEo"),
+            SearchRegion("New York, NY", "ChIJOwg_06VPwokRYv534QaPC8g"),
+            SearchRegion("Los Angeles, CA", "ChIJE9on3F3HwoAR9AhGJW_fL-I"),
+            SearchRegion("Chicago, IL", "ChIJ7cv00DwsDogRAMDACa2m4K8")
         )
     )
 }

@@ -1,4 +1,4 @@
-package com.paywith.offersdemo.ui.home
+package com.paywith.offersdemo.ui.component
 
 /**
  * Project: Offers Demo
@@ -56,7 +56,6 @@ import androidx.compose.ui.unit.dp
 import com.paywith.offersdemo.R
 import com.paywith.offersdemo.domain.model.SearchModifier.Filter.Companion.DEFAULT_FILTER_QUERY
 import com.paywith.offersdemo.ui.model.OfferUiModel
-import com.paywith.offersdemo.ui.offers.OfferItem
 
 
 @Composable

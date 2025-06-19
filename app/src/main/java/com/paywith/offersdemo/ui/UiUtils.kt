@@ -1,14 +1,19 @@
 package com.paywith.offersdemo.ui
 
 import android.graphics.Canvas
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.android.gms.maps.model.BitmapDescriptor
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.paywith.offersdemo.R
@@ -79,3 +84,28 @@ fun getPointsText(offer: OfferUiModel): String {
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+fun LocationPermissionHandler(
+    permissions: List<String> = listOf(
+        android.Manifest.permission.ACCESS_FINE_LOCATION,
+        android.Manifest.permission.ACCESS_COARSE_LOCATION
+    ),
+    onPermissionGranted: () -> Unit
+) {
+    val permissionState = rememberMultiplePermissionsState(permissions)
+
+    LaunchedEffect(Unit) {
+        permissionState.launchMultiplePermissionRequest()
+    }
+
+    val grantedOnce = remember { mutableStateOf(false) }
+
+    LaunchedEffect(permissionState.allPermissionsGranted) {
+        Log.d("PermissionCheck", "Permission granted: ${permissionState.allPermissionsGranted}")
+        if (permissionState.allPermissionsGranted && !grantedOnce.value) {
+            grantedOnce.value = true
+            onPermissionGranted()
+        }
+    }
+}

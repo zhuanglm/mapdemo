@@ -103,4 +103,6 @@ dependencies {
     implementation(libs.maps.compose)
     implementation(libs.play.services.maps)
     implementation(libs.places)
+
+    implementation(libs.kotlinx.collections.immutable)
 }

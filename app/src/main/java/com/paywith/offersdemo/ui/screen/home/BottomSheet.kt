@@ -1,4 +1,4 @@
-package com.paywith.offersdemo.ui.home
+package com.paywith.offersdemo.ui.screen.home
 
 /**
  * Project: Offers Demo
@@ -41,9 +41,10 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.paywith.offersdemo.R
 import com.paywith.offersdemo.domain.model.SearchModifier.Filter.Companion.DEFAULT_FILTER_QUERY
+import com.paywith.offersdemo.ui.component.ButtonsRow
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.ui.model.SortOption
-import com.paywith.offersdemo.ui.offers.OffersScreenContent
+import com.paywith.offersdemo.ui.component.SelectableOptionGroup
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

@@ -1,4 +1,4 @@
-package com.paywith.offersdemo.ui.home
+package com.paywith.offersdemo.ui.screen.home
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.paywith.offersdemo.R
-import com.paywith.offersdemo.ui.AppStandardScreen
+import com.paywith.offersdemo.ui.component.AppStandardScreen
 import com.paywith.offersdemo.ui.getPointsText
 import com.paywith.offersdemo.ui.viewmodel.AppViewModel
 import com.paywith.offersdemo.ui.model.OfferUiModel

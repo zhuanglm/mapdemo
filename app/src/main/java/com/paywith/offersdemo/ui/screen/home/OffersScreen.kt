@@ -1,6 +1,5 @@
-package com.paywith.offersdemo.ui.offers
+package com.paywith.offersdemo.ui.screen.home
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,23 +9,21 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.paywith.offersdemo.R
 import com.paywith.offersdemo.data.model.ApiResponse
-import com.paywith.offersdemo.ui.AppStandardScreen
-import com.paywith.offersdemo.ui.viewmodel.AppViewModel
+import com.paywith.offersdemo.ui.LocationPermissionHandler
+import com.paywith.offersdemo.ui.component.AppStandardScreen
+import com.paywith.offersdemo.ui.component.OfferItem
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.ui.model.PointsType
+import com.paywith.offersdemo.ui.viewmodel.AppViewModel
 
 
 @Composable
@@ -37,15 +34,8 @@ fun OffersScreen(appViewModel: AppViewModel) {
         }
     )
 
-    val location by appViewModel.locationFlow.collectAsState()
     val offersResponse by appViewModel.offers.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-
-    LaunchedEffect(location) {
-        location?.let {
-            snackbarHostState.showSnackbar("Location: ${it.latitude}, ${it.longitude}")
-        }
-    }
 
     AppStandardScreen(
         title = stringResource(R.string.offers),
@@ -117,31 +107,5 @@ fun OffersScreenContentPreview() {
         )
     )
     OffersScreenContent(Modifier,testOffers) {}
-}
-
-@OptIn(ExperimentalPermissionsApi::class)
-@Composable
-fun LocationPermissionHandler(
-    permissions: List<String> = listOf(
-        android.Manifest.permission.ACCESS_FINE_LOCATION,
-        android.Manifest.permission.ACCESS_COARSE_LOCATION
-    ),
-    onPermissionGranted: () -> Unit
-) {
-    val permissionState = rememberMultiplePermissionsState(permissions)
-
-    LaunchedEffect(Unit) {
-        permissionState.launchMultiplePermissionRequest()
-    }
-
-    val grantedOnce = remember { mutableStateOf(false) }
-
-    LaunchedEffect(permissionState.allPermissionsGranted) {
-        Log.d("PermissionCheck", "Permission granted: ${permissionState.allPermissionsGranted}")
-        if (permissionState.allPermissionsGranted && !grantedOnce.value) {
-            grantedOnce.value = true
-            onPermissionGranted()
-        }
-    }
 }
 

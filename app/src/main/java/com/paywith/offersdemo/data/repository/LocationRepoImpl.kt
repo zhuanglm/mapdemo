@@ -1,20 +1,18 @@
 package com.paywith.offersdemo.data.repository
 
 import android.location.Location
-import android.util.Log
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
+import com.google.android.libraries.places.api.net.PlacesClient
 import com.paywith.offersdemo.data.location.LocationProvider
-
+import com.paywith.offersdemo.data.model.SearchRegion
 import com.paywith.offersdemo.domain.repository.LocationRepository
 import javax.inject.Inject
-import kotlin.coroutines.suspendCoroutine
-import com.google.android.libraries.places.api.net.PlacesClient
-import com.paywith.offersdemo.data.model.SearchRegion
 import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class LocationRepoImpl @Inject constructor(
     private val locationProvider: LocationProvider,
@@ -55,7 +53,7 @@ class LocationRepoImpl @Inject constructor(
             .addOnSuccessListener { response ->
                 continuation.resume(response.place.latLng)
             }
-            .addOnFailureListener { e->
+            .addOnFailureListener {
                 continuation.resume(null)
             }
     }

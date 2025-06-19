@@ -83,12 +83,12 @@ fun SearchMerchantScreen(
                 }
             )
 
-            offers?.let {
+            offers?.let { offer ->
                 OffersScreenContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f),
-                    offers = it,
+                    offers = offer,
                     onOfferClick = {
                         onItemClick(it.offerId)
                     }

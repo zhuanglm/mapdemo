@@ -1,10 +1,10 @@
 package com.paywith.offersdemo.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,7 +22,6 @@ import com.paywith.offersdemo.ui.navigation.AppNavGraph
 import com.paywith.offersdemo.ui.viewmodel.AppViewModel
 import com.paywith.offersdemo.ui.viewmodel.LoginViewModel
 import kotlinx.coroutines.flow.collectLatest
-import androidx.compose.material3.CircularProgressIndicator
 
 /**
  * Project: Offers Demo

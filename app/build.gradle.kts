@@ -105,4 +105,5 @@ dependencies {
     implementation(libs.places)
 
     implementation(libs.kotlinx.collections.immutable)
+    implementation(libs.kotlinx.coroutines.play.services)
 }

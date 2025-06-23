@@ -74,6 +74,8 @@ class LocationRepoImpl @Inject constructor(
      * @param placeId The Google Places unique identifier for the place.
      * @return The [LatLng] coordinates of the place, or null if fetching fails.
      */
+    @Suppress("DEPRECATION")
+    // TODO: Replace when official alternative to LAT_LNG is available
     override suspend fun fetchLatLngFromPlaceId(placeId: String): LatLng? = suspendCoroutine { continuation ->
         val request = FetchPlaceRequest.builder(placeId, listOf(Place.Field.LAT_LNG)).build()
 

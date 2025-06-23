@@ -20,7 +20,6 @@ import kotlin.math.sqrt
  * @property latitude The latitude of the coordinate. Defaults to [SearchQuery.DEFAULT_LAT].
  * @property longitude The longitude of the coordinate. Defaults to [SearchQuery.DEFAULT_LNG].
  */
-
 @Parcelize
 data class Coords(
     @SerializedName("lat")

@@ -12,7 +12,6 @@ package com.paywith.offersdemo.domain.model
  * @property query The query string associated with the search modifier, used for API requests.
  * @property position The position of the search modifier in a list or UI element.
  */
-
 sealed class SearchModifier(val title: String, val query: String, val position: Int) {
 
     /**

@@ -4,7 +4,11 @@ import android.location.Location
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import kotlin.math.atan2
+import kotlin.math.cos
 import kotlin.math.pow
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 /**
  * Represents a geographical coordinate with latitude and longitude.
@@ -32,13 +36,10 @@ data class Coords(
         MILES
     }
 
-    fun isDefault(): Boolean =
-        latitude == SearchQuery.DEFAULT_LAT && longitude == SearchQuery.DEFAULT_LNG
-
     fun getDistance(location: Coords, distanceType: DistanceType): Double =
         getDistance(location.latitude, location.longitude, distanceType)
 
-    fun getDistance(latitude: Double, longitude: Double, distanceType: DistanceType): Double =
+    private fun getDistance(latitude: Double, longitude: Double, distanceType: DistanceType): Double =
         getDistance(this.latitude, this.longitude, latitude, longitude, distanceType)
 
     companion object {
@@ -48,14 +49,6 @@ data class Coords(
         @JvmStatic
         fun fromLocation(location: Location): Coords =
             Coords(location.latitude, location.longitude)
-
-        @JvmStatic
-        fun getDistance(location1: Coords, location2: Coords, distanceType: DistanceType): Double =
-            getDistance(location1.latitude, location1.longitude, location2.latitude, location2.longitude, distanceType)
-
-        @JvmStatic
-        fun getDistance(location: Coords, latitude: Double, longitude: Double, distanceType: DistanceType): Double =
-            getDistance(location.latitude, location.longitude, latitude, longitude, distanceType)
 
         @JvmStatic
         fun getDistance(
@@ -88,13 +81,13 @@ data class Coords(
         ): Double {
             val latDistance = Math.toRadians(lat2 - lat1)
             val lonDistance = Math.toRadians(lon2 - lon1)
-            val a = Math.sin(latDistance / 2).pow(2.0) +
-                    Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
-                    Math.sin(lonDistance / 2).pow(2.0)
-            val c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+            val a = sin(latDistance / 2).pow(2.0) +
+                    cos(Math.toRadians(lat1)) * cos(Math.toRadians(lat2)) *
+                    sin(lonDistance / 2).pow(2.0)
+            val c = 2 * atan2(sqrt(a), sqrt(1 - a))
             val distance = EARTH_RADIUS * c * 1000 // meters
             val height = elevation1 - elevation2
-            return Math.sqrt(distance * distance + height * height)
+            return sqrt(distance * distance + height * height)
         }
     }
 }

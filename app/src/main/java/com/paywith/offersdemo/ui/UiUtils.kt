@@ -1,6 +1,5 @@
 package com.paywith.offersdemo.ui
 
-import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.Log
 import androidx.annotation.DrawableRes
@@ -9,9 +8,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -21,9 +22,6 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.paywith.offersdemo.R
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.ui.model.PointsType
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.dp
-
 
 
 /**

@@ -107,15 +107,6 @@ data class Offer(
         }
     }
 
-    fun getBanner(): String {
-        return when {
-            !locationBanner.isNullOrEmpty() -> locationBanner
-            !merchantBanner.isNullOrEmpty() -> merchantBanner
-            !legacyBanner.isNullOrEmpty() -> legacyBanner
-            else -> ""
-        }
-    }
-
     fun getLogo(): String {
         return when {
             !locationLogo.isNullOrEmpty() -> locationLogo

@@ -35,14 +35,6 @@ sealed class SearchModifier(val title: String, val query: String, val position: 
                 DEFAULT_FILTER_QUERY
             )
 
-            fun fromQuery(query: String, filters: List<Filter>): SearchModifier {
-                val filter = filters.filter { it.query == query }
-                if (filter.isNotEmpty()) {
-                    return (filter[0])
-                }
-
-                return getDefaultFilter()
-            }
         }
     }
 
@@ -78,13 +70,6 @@ sealed class SearchModifier(val title: String, val query: String, val position: 
                 SORT_BEST_LOYALTY_QUERY
             )
 
-            fun fromQuery(query: String): SearchModifier {
-                return when (query) {
-                    SORT_BEST_LOYALTY_QUERY -> getSortBestLoyalty()
-                    SORT_CLOSEST_QUERY -> getSortClosest()
-                    else -> getSortClosest()
-                }
-            }
         }
     }
 }

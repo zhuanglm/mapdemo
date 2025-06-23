@@ -26,13 +26,6 @@ class LocationRepoImpl @Inject constructor(
     private val locationProvider: LocationProvider,
     private val placesClient: PlacesClient
 ) : LocationRepository {
-    /**
-     * Returns the current device location asynchronously.
-     *
-     * Delegates to [locationProvider.getCurrentLocation].
-     *
-     * @return The latest known [Location], or null if unavailable.
-     */
     override suspend fun getCurrentLocation(): Location? {
         return locationProvider.getCurrentLocation()
     }

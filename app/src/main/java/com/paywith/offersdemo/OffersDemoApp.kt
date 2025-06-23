@@ -7,7 +7,17 @@ import android.os.Bundle
 import android.util.Log
 import com.google.android.libraries.places.api.Places
 import dagger.hilt.android.HiltAndroidApp
-
+/**
+ * Project: Offers Demo
+ * File: OffersDemoApp.kt
+ * Created: 2025-06-09
+ * Developer: Ray Z
+ * Description: Main application class for the Offers Demo app. Initializes Hilt for dependency injection
+ * and the Google Places SDK.
+ *
+ * This file is part of a Jetpack Compose-based Kotlin application.
+ * All rights reserved © paywith.com.
+ */
 @HiltAndroidApp
 class OffersDemoApp : Application() {
 
@@ -16,7 +26,7 @@ class OffersDemoApp : Application() {
 
         //Google Places SDK
         if (!Places.isInitialized()) {
-            val mapsApiKey = getMetaDataValue(this, "com.google.android.geo.API_KEY")
+            val mapsApiKey = getMetaDataValue(this)
             mapsApiKey?.let {
                 Places.initialize(
                     applicationContext,
@@ -30,10 +40,12 @@ class OffersDemoApp : Application() {
      * Retrieves the string value of a specified meta-data tag from the AndroidManifest.xml.
      *
      * @param context The context object.
-     * @param metaDataName The value of the android:name attribute in the meta-data tag.
      * @return The corresponding string value, or null if not found or an error occurs.
      */
-    fun getMetaDataValue(context: Context, metaDataName: String): String? {
+    private fun getMetaDataValue(context: Context): String? {
+        //The value of the android:name attribute in the meta-data tag.
+        val metaDataName = "com.google.android.geo.API_KEY"
+
         try {
             val applicationInfo = context.packageManager.getApplicationInfo(
                 context.packageName,

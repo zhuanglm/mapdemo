@@ -14,7 +14,11 @@ import kotlinx.coroutines.withContext
  * File: BaseViewModel
  * Created: 2025-06-11
  * Developer: Ray Z
- * Description: [Add a brief description of the purpose of this file]
+ * Description:
+ * Base ViewModel that provides common functionality:
+ * - loading state
+ * - error message handling
+ * - API response handling (with and without data mapping)
  *
  * This file is part of a Jetpack Compose-based Kotlin application.
  * All rights reserved © paywith.com.
@@ -36,6 +40,14 @@ open class BaseViewModel : ViewModel() {
         _loading.value = false
     }
 
+    /**
+     * Executes a suspend API call, maps the result to a new type [R],
+     * and emits the final result to a [MutableStateFlow].
+     *
+     * @param flow The destination StateFlow to emit UI-friendly results into
+     * @param sourceCall The original suspend API call returning ApiResponse<T>
+     * @param mapper A suspend function to convert from T to R
+     */
     protected suspend fun <T, R> emitMappedApiResponse(
         flow: MutableStateFlow<ApiResponse<R>>,
         sourceCall: suspend () -> ApiResponse<T>,
@@ -62,6 +74,13 @@ open class BaseViewModel : ViewModel() {
         }
     }
 
+    /**
+     * Executes a suspend API call and directly emits the ApiResponse<T>
+     * into the given MutableStateFlow, with automatic error and loading handling.
+     *
+     * @param flow The destination StateFlow to emit into
+     * @param sourceCall The suspend function that performs the API call
+     */
     protected suspend fun <T> emitApiResponse(
         flow: MutableStateFlow<ApiResponse<T>>,
         sourceCall: suspend () -> ApiResponse<T>
@@ -89,6 +108,4 @@ open class BaseViewModel : ViewModel() {
     private suspend fun showError(message: String?) {
         _errorMessage.emit(message ?: "Unknown error")
     }
-
-
 }

@@ -13,7 +13,13 @@ import androidx.compose.ui.res.painterResource
 import com.paywith.offersdemo.R
 import com.paywith.offersdemo.ui.theme.endColor
 import com.paywith.offersdemo.ui.theme.startColor
-
+/**
+ * A composable function that provides a consistent background for the application.
+ * It applies a linear gradient and a background image pattern.
+ *
+ * @param modifier Optional [Modifier] to be applied to the background.
+ * @param content The composable content to be displayed on top of the background.
+ */
 @Composable
 fun AppBackground(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Box(

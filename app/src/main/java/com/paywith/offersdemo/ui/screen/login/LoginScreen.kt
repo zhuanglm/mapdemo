@@ -41,7 +41,18 @@ import androidx.compose.ui.unit.dp
 import com.paywith.offersdemo.R
 import com.paywith.offersdemo.data.model.ApiResponse
 import com.paywith.offersdemo.ui.viewmodel.LoginViewModel
-
+/**
+ * Composable function for the Login Screen.
+ *
+ * This screen provides the UI for user authentication. It includes input fields for
+ * phone number and password, and a login button. It observes the login state from
+ * the [LoginViewModel] and triggers [onLoginSuccess] upon successful authentication.
+ * It also displays snackbar messages for feedback using [snackbarHostState].
+ *
+ * @param viewModel The [LoginViewModel] responsible for handling login logic and state.
+ * @param snackbarHostState The [SnackbarHostState] used to display snackbar messages.
+ * @param onLoginSuccess A callback function to be invoked when the login is successful.
+ */
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel, snackbarHostState: SnackbarHostState,

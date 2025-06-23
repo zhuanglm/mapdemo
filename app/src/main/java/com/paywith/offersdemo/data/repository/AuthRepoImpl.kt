@@ -10,6 +10,13 @@ import com.paywith.offersdemo.domain.repository.AuthRepository
 import retrofit2.HttpException
 import javax.inject.Inject
 
+/**
+ * Implementation of the [AuthRepository] interface.
+ *
+ * This class handles authentication-related operations by interacting with the [ApiService].
+ *
+ * @property apiService The [ApiService] instance used for making network requests.
+ */
 class AuthRepoImpl @Inject constructor(
     private val apiService: ApiService
 ) : AuthRepository {

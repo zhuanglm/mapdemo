@@ -28,7 +28,9 @@ import kotlinx.coroutines.flow.collectLatest
  * File: AppScaffold
  * Created: 2025-06-17
  * Developer: Ray Z
- * Description: [Add a brief description of the purpose of this file]
+ * Description: This composable function serves as the main scaffold for the application.
+ * It sets up the navigation, handles global UI states like loading indicators and snackbars,
+ * and provides the overall structure for the app's screens.
  *
  * This file is part of a Jetpack Compose-based Kotlin application.
  * All rights reserved © paywith.com.

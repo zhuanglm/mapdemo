@@ -15,7 +15,6 @@ import com.paywith.offersdemo.domain.model.SearchQuery
 import com.paywith.offersdemo.domain.model.SearchQuery.Companion.DEFAULT_LAT
 import com.paywith.offersdemo.domain.model.SearchQuery.Companion.DEFAULT_LNG
 import com.paywith.offersdemo.domain.repository.LocationRepository
-import com.paywith.offersdemo.domain.usecase.FilterOffersUseCase
 import com.paywith.offersdemo.domain.usecase.GetOfferTagsUseCase
 import com.paywith.offersdemo.domain.usecase.GetOffersUseCase
 import com.paywith.offersdemo.ui.model.LatLngWithZoom
@@ -50,7 +49,6 @@ import kotlin.math.roundToInt
  *
  * @property getOffers Use case for fetching offers from the repository.
  * @property getOfferTags Use case for fetching offer tags.
- * @property filterOffersUseCase Use case for filtering offers based on criteria.
  * @property location Repository for accessing location data.
  */
 
@@ -58,7 +56,6 @@ import kotlin.math.roundToInt
 class AppViewModel @Inject constructor(
     private val getOffers: GetOffersUseCase,
     private val getOfferTags: GetOfferTagsUseCase,
-    private val filterOffersUseCase: FilterOffersUseCase,
     private val location: LocationRepository
 ) : BaseViewModel() {
 
@@ -67,17 +64,21 @@ class AppViewModel @Inject constructor(
     private val _location = MutableStateFlow<Coords?>(null)
     val locationFlow: StateFlow<Coords?> = _location
 
+    // Observe location changes and reload offers when location updates
     init {
         _location
             .filterNotNull()
             .distinctUntilChanged()
             .onEach {
                 loadOffers()
-                loadOfferTags()
             }
             .launchIn(viewModelScope)
     }
 
+    /**
+     * Fetches the user's current location.
+     * Updates the internal `_location` state and attaches coordinates to the search query.
+     */
     fun fetchLocation() {
         viewModelScope.launch {
             val loc = location.getCurrentLocation()
@@ -89,13 +90,19 @@ class AppViewModel @Inject constructor(
             if (_location.value != coordinates) {
                 _location.value = coordinates
             }
-            searchQuery.withCoords(coordinates)
+
+            // Update search query with current location
+            searchQuery = searchQuery.withCoords(coordinates)
         }
     }
 
     private val _locations = mutableStateOf<List<SearchRegion>>(emptyList())
     val locations: State<List<SearchRegion>> = _locations
 
+    /**
+     * Updates available regions based on the user's input query.
+     * Used for region/location search UI.
+     */
     fun onSearchRegionChange(query: String) {
         viewModelScope.launch {
             _locations.value = location.searchRegions(query)
@@ -105,13 +112,20 @@ class AppViewModel @Inject constructor(
     private val _targetLocation = mutableStateOf<LatLngWithZoom?>(null)
     val targetLocation: State<LatLngWithZoom?> = _targetLocation
 
+    /**
+     * Sets the map's target location based on a Place ID.
+     */
     fun setTargetLocation(placeID: String) {
         viewModelScope.launch {
-            val latLng = location.fetchLatLngFromPlaceId(placeID)
-            latLng?.let { setTargetLocation(it) }
+            location.fetchLatLngFromPlaceId(placeID)?.let {
+                setTargetLocation(it)
+            }
         }
     }
 
+    /**
+     * Sets the target location for the map, optionally providing a zoom level.
+     */
     fun setTargetLocation(latLng: LatLng?, zoom: Float = 12f) {
         _targetLocation.value = latLng?.let {
             LatLngWithZoom(it, zoom)
@@ -122,6 +136,11 @@ class AppViewModel @Inject constructor(
     val offers: StateFlow<ApiResponse<List<OfferUiModel>>> = _offers
     private var allOffers = listOf<Offer>()
 
+    /**
+     * Loads offers from the backend using the current search query.
+     * If a new text query is provided, it overrides the default.
+     * Results are converted to UI models, and the map target is updated to the first offer.
+     */
     fun loadOffers(query: String? = null) {
         viewModelScope.launch {
             val userCoordinates: Coords? = _location.value
@@ -151,29 +170,38 @@ class AppViewModel @Inject constructor(
         return currentOffers.find { it.offerId == offerId }
     }
 
+    /**
+     * Updates the sort value of the search query and reloads offers.
+     */
     fun updateSort(sort: String) {
         searchQuery = searchQuery.copy(sort = sort)
         loadOffers()
     }
 
+    /**
+     * Updates the filter value of the search query and reloads offers.
+     */
     fun updateFilter(filter: String) {
-        val filteredOffers = filterOffersUseCase(allOffers, filter)
-            .map { it.toOfferUiModel(null) }
-        updateTargetLocationToFirstOffer(filteredOffers)
-        _offers.value = ApiResponse.Success(filteredOffers)
+        searchQuery = searchQuery.copy(filter = filter)
+        loadOffers()
     }
 
     fun searchOffersByQuery(query: String) {
         loadOffers(query)
     }
 
+    /**
+     * Restores the cached full offer list (used after cancelling a search).
+     */
     fun restoreAllOffers() {
         val userLocation = _location.value
         val restoredOffers = allOffers.map { it.toOfferUiModel(userLocation) }
         _offers.value = ApiResponse.Success(restoredOffers)
     }
 
-
+    /**
+     * Automatically updates the map camera to focus on the first available offer.
+     */
     private fun updateTargetLocationToFirstOffer(offers: List<OfferUiModel>) {
         if (offers.isNotEmpty()) {
             val firstLoc = offers[0].merchantLocation
@@ -186,7 +214,12 @@ class AppViewModel @Inject constructor(
 
     private val _offerTags = MutableStateFlow<ApiResponse<OfferTags>>(ApiResponse.Loading)
 
-    private fun loadOfferTags() {
+    /**
+     * Loads available offer tags (e.g. category filters).
+     * Should only be called once; redundant calls are avoided internally.
+     */
+    fun loadOfferTags() {
+        if (_offerTags.value is ApiResponse.Success) return
         viewModelScope.launch {
             emitApiResponse(
                 flow = _offerTags,
@@ -195,6 +228,9 @@ class AppViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Returns a list of available filter tags from loaded tag types.
+     */
     fun getFilterOptions(): List<String> {
         val currentTags = (_offerTags.value as? ApiResponse.Success)?.data?.tagTypes.orEmpty()
         return currentTags
@@ -208,6 +244,10 @@ class AppViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Converts a domain Offer object into a UI model with computed properties,
+     * such as distance and points type.
+     */
     private fun Offer.toOfferUiModel(userLocation: Coords?): OfferUiModel {
         val (amount, type) = when {
             isAcquisition -> getValue(acquisitionAmount) to PointsType.ACQUISITION

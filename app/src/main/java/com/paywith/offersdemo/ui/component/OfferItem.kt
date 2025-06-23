@@ -33,7 +33,14 @@ import com.paywith.offersdemo.R
 import com.paywith.offersdemo.ui.getPointsText
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.ui.theme.ColorSearchHint
-
+/**
+ * Composable function to display a single offer item in a list.
+ * It shows the merchant's logo, name, distance, address, and points associated with the offer.
+ *
+ * @param modifier Modifier for customizing the layout.
+ * @param obs The [OfferUiModel] containing the data for the offer to be displayed.
+ * @param onClick A lambda function to be invoked when the offer item is clicked.
+ */
 @Composable
 fun OfferItem(
     modifier: Modifier = Modifier,

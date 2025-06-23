@@ -6,6 +6,17 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import kotlin.math.pow
 
+/**
+ * Represents a geographical coordinate with latitude and longitude.
+ *
+ * This data class is parcelable and can be used for serialization/deserialization.
+ * It provides methods for calculating distances between coordinates and checking
+ * if the coordinates are set to default values.
+ *
+ * @property latitude The latitude of the coordinate. Defaults to [SearchQuery.DEFAULT_LAT].
+ * @property longitude The longitude of the coordinate. Defaults to [SearchQuery.DEFAULT_LNG].
+ */
+
 @Parcelize
 data class Coords(
     @SerializedName("lat")

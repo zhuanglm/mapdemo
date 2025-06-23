@@ -10,9 +10,29 @@ import com.paywith.offersdemo.domain.repository.OffersRepository
 import retrofit2.HttpException
 import javax.inject.Inject
 
+
+/**
+ * Implementation of the [OffersRepository] interface.
+ *
+ * This class is responsible for fetching offer-related data from the [ApiService].
+ * It handles the conversion of DTOs (Data Transfer Objects) from the API to domain models.
+ * It also manages API response states (Success/Failure) using the [ApiResponse] wrapper.
+ *
+ * @property apiService The service used to make network requests for offer data.
+ */
 class OffersRepoImpl @Inject constructor(
     private val apiService: ApiService
 ) : OffersRepository {
+    /**
+     * Fetches a list of [Offer]s filtered by the given [query].
+     *
+     * Converts the Retrofit response to a sealed [ApiResponse].
+     * Maps DTO objects ([OfferDto]) to domain models ([Offer]).
+     *
+     * @param query The search query parameters used for filtering offers.
+     * @return [ApiResponse.Success] with list of [Offer] on success,
+     *         or [ApiResponse.Failure] containing error info on failure.
+     */
     override suspend fun getOffersByQuery(query: SearchQuery): ApiResponse<List<Offer>> {
         return try {
             val response = apiService.getOffersByQuery(query)
@@ -27,6 +47,10 @@ class OffersRepoImpl @Inject constructor(
 
     }
 
+    /**
+     * Maps [OfferDto] data transfer object to domain [Offer] model.
+     * This allows separation between network data representation and business logic model.
+     */
     private fun OfferDto.toOffer(): Offer {
         return Offer(
             id = this.id,
@@ -71,7 +95,14 @@ class OffersRepoImpl @Inject constructor(
         )
     }
 
-
+    /**
+     * Fetches offer tags (filter options) from the remote API.
+     *
+     * Converts the Retrofit response to a sealed [ApiResponse].
+     *
+     * @return [ApiResponse.Success] with [OfferTags] on success,
+     *         or [ApiResponse.Failure] containing error info on failure.
+     */
     override suspend fun getOfferTags(): ApiResponse<OfferTags> {
         return try {
             val response = apiService.getOfferTags()

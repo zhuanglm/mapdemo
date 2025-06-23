@@ -3,6 +3,18 @@ package com.paywith.offersdemo.domain.model
 import android.icu.text.DecimalFormat
 import android.location.Location
 
+/**
+ * Represents an offer from a merchant.
+ *
+ * This data class holds all the information related to an offer, including details about the
+ * merchant, the offer itself (acquisition or loyalty), and various links and media.
+ *
+ * @property id The unique identifier for the offer.
+ * @property merchantId The unique identifier for the merchant.
+ * @property businessName The name of the business offering the deal.
+ * @property tagType The type of tag associated with the offer (e.g., "Eat", "Shop").
+ */
+
 data class Offer(
     val id: Int? = null,
     val merchantId: Int? = null,

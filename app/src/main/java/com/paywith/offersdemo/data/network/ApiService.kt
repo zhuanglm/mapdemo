@@ -10,6 +10,17 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 
+/**
+ * Project: Offers Demo
+ * File: ApiService
+ * Created: 2025-06-09
+ * Developer: Ray Z
+ * Description: Interface defining API endpoints for the Offers Demo application.
+ *
+ * This file is part of a Jetpack Compose-based Kotlin application.
+ * All rights reserved © paywith.com.
+ */
+
 interface ApiService {
     @POST("persistence_layer/search")
     suspend fun getOffersByQuery(@Body searchQuery: SearchQuery): Response<List<OfferDto>>

@@ -46,7 +46,15 @@ import com.paywith.offersdemo.ui.theme.ColorSearchHint
 import com.paywith.offersdemo.ui.theme.LightBlue
 import com.paywith.offersdemo.ui.viewmodel.AppViewModel
 
-
+/**
+ * Composable function for the Search Merchant screen.
+ * This screen allows users to search for merchants/offers.
+ *
+ * @param appViewModel The [AppViewModel] used for managing UI state and business logic.
+ * @param onItemClick A callback function that is invoked when an offer item is clicked.
+ *                    It receives the offer ID as a [String].
+ * @param onBackClick A callback function that is invoked when the back/cancel action is triggered.
+ */
 @Composable
 fun SearchMerchantScreen(
     appViewModel: AppViewModel,

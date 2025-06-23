@@ -3,7 +3,20 @@ package com.paywith.offersdemo.domain.model
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
-
+/**
+ * Represents a search query for offers.
+ *
+ * This data class is used to encapsulate the parameters for searching offers,
+ * including filtering, sorting, location, distance, and a general query string.
+ * It is Parcelable to allow it to be passed between Android components.
+ *
+ * @property filter The type of tag to filter by (e.g., "category", "brand"). Serialized as "tag_type".
+ * @property sort The attribute to sort the results by. Serialized as "sort_by_attribute".
+ * @property lat The latitude for location-based searches. Defaults to [DEFAULT_LAT].
+ * @property lng The longitude for location-based searches. Defaults to [DEFAULT_LNG].
+ * @property distance The search radius from the specified coordinates (e.g., "5000km").
+ * @property query A general search query string.
+ */
 @Parcelize
 data class SearchQuery(
     @SerializedName("tag_type") val filter: String = "",

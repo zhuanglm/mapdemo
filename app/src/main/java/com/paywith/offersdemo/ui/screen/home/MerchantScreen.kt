@@ -33,7 +33,22 @@ import com.paywith.offersdemo.ui.getPointsText
 import com.paywith.offersdemo.ui.viewmodel.AppViewModel
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import kotlinx.coroutines.launch
-
+/**
+ * Displays the merchant details screen.
+ *
+ * This composable function is responsible for rendering the UI that shows information
+ * about a specific merchant and their offers. It utilizes an [AppViewModel] to fetch
+ * the offer details based on the provided [offerID].
+ *
+ * The screen includes a back navigation action, handled by [onBackClick].
+ * It uses [AppStandardScreen] as a base layout and displays [MerchantScreenContent]
+ * if the offer data is available.
+ *
+ * @param appViewModel The view model providing access to application data,
+ *                     specifically for retrieving offer details.
+ * @param offerID The unique identifier of the offer to be displayed.
+ * @param onBackClick A lambda function to be invoked when the back button is pressed.
+ */
 @Composable
 fun MerchantScreen(
     appViewModel: AppViewModel,

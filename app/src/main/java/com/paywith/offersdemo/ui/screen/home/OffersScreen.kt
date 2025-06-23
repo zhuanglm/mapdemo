@@ -25,7 +25,15 @@ import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.ui.model.PointsType
 import com.paywith.offersdemo.ui.viewmodel.AppViewModel
 
-
+/**
+ * Displays the main screen for offers.
+ *
+ * This composable function handles location permission requests, fetches offer data
+ * from the [appViewModel], and displays the offers using [OffersScreenContent].
+ * It also manages a [SnackbarHostState] for displaying messages.
+ *
+ * @param appViewModel The [AppViewModel] instance used to fetch and manage offer data.
+ */
 @Composable
 fun OffersScreen(appViewModel: AppViewModel) {
     LocationPermissionHandler(

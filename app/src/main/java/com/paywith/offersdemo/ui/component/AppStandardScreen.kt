@@ -18,7 +18,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.paywith.offersdemo.ui.theme.endColor
-
+/**
+ * A standard screen layout for the application.
+ *
+ * This composable function provides a consistent structure for screens,
+ * including a top app bar with an optional back button, a snackbar host,
+ * and a floating action button for navigation.
+ *
+ * @param modifier The modifier to be applied to the screen.
+ * @param title The title to be displayed in the top app bar.
+ * @param snackbarHostState The state for managing snackbars.
+ * @param onBack An optional lambda to be invoked when the back button is pressed.
+ *               If null, the back button and floating action button will not be displayed.
+ * @param content The main content of the screen, which receives padding values to adjust for system bars.
+ */
 // Base screen layout
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

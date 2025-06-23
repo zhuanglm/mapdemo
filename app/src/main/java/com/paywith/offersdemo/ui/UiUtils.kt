@@ -1,5 +1,6 @@
 package com.paywith.offersdemo.ui
 
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.util.Log
 import androidx.annotation.DrawableRes
@@ -10,6 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -19,6 +21,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.paywith.offersdemo.R
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.ui.model.PointsType
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
+
 
 
 /**
@@ -36,24 +41,34 @@ import com.paywith.offersdemo.ui.model.PointsType
  * convert Vector Drawable to Map Marker BitmapDescriptor。
  *
  * @param drawableResId Vector Drawable res ID (for example: R.drawable.ic_map_marker_default).
- * @param color .
  * @return Marker.icon BitmapDescriptor.
  */
 @Composable
 fun rememberMarkerIconFromVector(
-    @DrawableRes drawableResId: Int
+    @DrawableRes drawableResId: Int,
 ): BitmapDescriptor {
     val context = LocalContext.current
+    val density = LocalDensity.current
+    val targetHeightDp: Dp = 48.dp
 
-    return remember(drawableResId) {
-
+    return remember(drawableResId, targetHeightDp) {
         val drawable = ContextCompat.getDrawable(context, drawableResId)
-            ?: throw IllegalArgumentException("Resource not found")
+            ?: throw IllegalArgumentException("Drawable resource not found: $drawableResId")
 
-        val bitmap = createBitmap(drawable.intrinsicWidth, drawable.intrinsicHeight)
+        val originalWidth = drawable.intrinsicWidth
+        val originalHeight = drawable.intrinsicHeight
 
+        val safeHeight = if (originalHeight > 0) originalHeight else 1
+        val safeWidth = if (originalWidth > 0) originalWidth else 1
+
+        val aspectRatio = safeWidth.toFloat() / safeHeight
+
+        // dp -> px
+        val targetHeightPx = with(density) { targetHeightDp.toPx() }.toInt()
+        val scaledWidthPx = (targetHeightPx * aspectRatio).toInt()
+
+        val bitmap = createBitmap(scaledWidthPx, targetHeightPx)
         val canvas = Canvas(bitmap)
-
         drawable.setBounds(0, 0, canvas.width, canvas.height)
         drawable.draw(canvas)
 
@@ -61,11 +76,14 @@ fun rememberMarkerIconFromVector(
     }
 }
 
+
+
 @Composable
 fun getOfferMarkerIcon(offer: OfferUiModel, isSelected: Boolean): BitmapDescriptor {
     val resId = when (offer.tagType) {
-        "Eat" -> if (isSelected) R.drawable.ic_marker_restaurant_selected else R.drawable.ic_marker_restaurant
-        "Shop" -> if (isSelected) R.drawable.ic_marker_shop_selected else R.drawable.ic_marker_shop
+        "Eat" -> if (isSelected) R.drawable.marker_dining_select else R.drawable.marker_dining_select
+        "Shop" -> if (isSelected) R.drawable.marker_shopping_select else R.drawable.marker_shopping
+        "Service" -> if (isSelected) R.drawable.marker_services_select else R.drawable.marker_services
         else -> if (isSelected) R.drawable.ic_map_marker_selected else R.drawable.ic_map_marker_default
     }
 
@@ -84,6 +102,16 @@ fun getPointsText(offer: OfferUiModel): String {
     }
 }
 
+/**
+ * A Composable function that handles location permission requests.
+ *
+ * It requests the specified location permissions when the composable enters the composition.
+ * Once all requested permissions are granted, it invokes the `onPermissionGranted` callback.
+ * This callback is only invoked once, even if the permission state changes subsequently (e.g., if permissions are revoked and then granted again).
+ *
+ * @param permissions A list of location permission strings to request. Defaults to `ACCESS_FINE_LOCATION` and `ACCESS_COARSE_LOCATION`.
+ * @param onPermissionGranted A lambda function to be executed when all requested permissions are granted for the first time.
+ */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun LocationPermissionHandler(

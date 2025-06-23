@@ -14,15 +14,40 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
+/**
+ * Implementation of [LocationRepository] using Google Play Services LocationProvider
+ * and Places SDK for Places Autocomplete and place details.
+ *
+ * @param locationProvider Provides the device's current location.
+ * @param placesClient Used for Google Places API requests.
+ */
+
 class LocationRepoImpl @Inject constructor(
     private val locationProvider: LocationProvider,
     private val placesClient: PlacesClient
 ) : LocationRepository {
+    /**
+     * Returns the current device location asynchronously.
+     *
+     * Delegates to [locationProvider.getCurrentLocation].
+     *
+     * @return The latest known [Location], or null if unavailable.
+     */
     override suspend fun getCurrentLocation(): Location? {
         return locationProvider.getCurrentLocation()
     }
 
-    //**********google Place API implementation
+    /**
+     * Searches for regions (places) matching the input [query] using
+     * Google Places Autocomplete API.
+     *
+     * This method suspends and resumes when the asynchronous
+     * Places API returns predictions.
+     *
+     * @param query The user input string to search for regions.
+     * @return A list of [SearchRegion] matching the query.
+     *         Returns empty list if the API call fails.
+     */
     override suspend fun searchRegions(query: String): List<SearchRegion> =
         suspendCoroutine { continuation ->
             val token = AutocompleteSessionToken.newInstance()
@@ -46,6 +71,16 @@ class LocationRepoImpl @Inject constructor(
                 }
         }
 
+    /**
+     * Fetches the latitude and longitude for a place given its [placeId]
+     * using Google Places Details API.
+     *
+     * This method suspends and resumes when the asynchronous
+     * Places API returns the place details.
+     *
+     * @param placeId The Google Places unique identifier for the place.
+     * @return The [LatLng] coordinates of the place, or null if fetching fails.
+     */
     override suspend fun fetchLatLngFromPlaceId(placeId: String): LatLng? = suspendCoroutine { continuation ->
         val request = FetchPlaceRequest.builder(placeId, listOf(Place.Field.LAT_LNG)).build()
 

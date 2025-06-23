@@ -43,7 +43,15 @@ import com.paywith.offersdemo.ui.viewmodel.AppViewModel
 import com.paywith.offersdemo.ui.theme.ColorSearchHint
 import com.paywith.offersdemo.ui.theme.LightBlue
 import com.paywith.offersdemo.ui.theme.LightGrey
-
+/**
+ * Composable function for the search region screen.
+ * This screen allows users to search for a location and select it.
+ *
+ * @param appViewModel The view model for the application.
+ * @param onBackClick A callback function to be invoked when the back button is clicked.
+ * @param onLocationSelected A callback function to be invoked when a location is selected,
+ *                           passing the place ID of the selected location.
+ */
 @Composable
 fun SearchRegionScreen(
     appViewModel: AppViewModel,

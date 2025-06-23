@@ -15,7 +15,7 @@ import javax.inject.Inject
  * File: LoginViewModel
  * Created: 2025-06-11
  * Developer: Ray Z
- * Description: [Add a brief description of the purpose of this file]
+ * Description: ViewModel responsible for handling user login logic and managing the login state.
  *
  * This file is part of a Jetpack Compose-based Kotlin application.
  * All rights reserved © paywith.com.

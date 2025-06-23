@@ -48,7 +48,13 @@ import com.paywith.offersdemo.R
 import com.paywith.offersdemo.ui.model.OfferUiModel
 import com.paywith.offersdemo.ui.theme.LightBlue
 import com.paywith.offersdemo.ui.theme.LightGrey
-
+/**
+ * Composable function that displays the content of the "Offer" tab.
+ * This includes the merchant icon, offer points, and offer details.
+ *
+ * @param offerPoints A string representing the points offered (e.g., "5x pts").
+ * @param offerDetails A string providing details about the offer.
+ */
 @Composable
 fun OfferTabContent(
     offerPoints: String,

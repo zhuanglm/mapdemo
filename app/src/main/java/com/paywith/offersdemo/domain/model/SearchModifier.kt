@@ -4,7 +4,15 @@ package com.paywith.offersdemo.domain.model
  * Convenient access classes for filter & sort options
  * Created by PayWith Developers on 2019-11-27.
  * developers@paywith.com
+ *
+ * This class defines a sealed hierarchy for search modifiers, which include filters and sort options.
+ * It provides a structured way to manage and access these options within the application.
+ *
+ * @property title The display title of the search modifier.
+ * @property query The query string associated with the search modifier, used for API requests.
+ * @property position The position of the search modifier in a list or UI element.
  */
+
 sealed class SearchModifier(val title: String, val query: String, val position: Int) {
 
     /**

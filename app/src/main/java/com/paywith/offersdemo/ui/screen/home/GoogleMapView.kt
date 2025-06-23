@@ -35,7 +35,20 @@ import com.paywith.offersdemo.R
 import com.paywith.offersdemo.ui.getOfferMarkerIcon
 import com.paywith.offersdemo.ui.model.OfferUiModel
 
-
+/**
+ * Composable function that displays a Google Map with markers for offers.
+ *
+ * This function integrates with Google Maps Compose library to render a map,
+ * apply custom map styles based on the current theme (day/night), and display
+ * markers for each offer. It also handles marker clicks to notify the caller.
+ *
+ * @param offers A list of [OfferUiModel] objects to be displayed as markers on the map.
+ * @param cameraPositionState The state object that controls the camera position of the map.
+ * @param selectedOffer The currently selected [OfferUiModel], used to highlight its marker.
+ *                      Can be null if no offer is selected.
+ * @param onMarkerClick A lambda function that is invoked when a marker on the map is clicked.
+ *                      It passes the corresponding [OfferUiModel] of the clicked marker.
+ */
 @OptIn(MapsComposeExperimentalApi::class)
 @Composable
 fun GoogleMapView(

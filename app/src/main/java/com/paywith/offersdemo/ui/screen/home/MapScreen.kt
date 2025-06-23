@@ -103,6 +103,11 @@ fun MapScreen(
     val coroutineScope = rememberCoroutineScope()
     val targetLocation by appViewModel.targetLocation
 
+    //load offer types and filter options
+    LaunchedEffect(Unit) {
+        appViewModel.loadOfferTags()
+    }
+
     // 🔵 get current location
     LaunchedEffect(location) {
         location?.let { loc ->
